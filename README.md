@@ -7,8 +7,8 @@ O **FinWise** é um aplicativo de gerenciamento financeiro pessoal que ajuda os 
 O aplicativo permite que os usuários criem e editem suas contas, registrem receitas e despesas de maneira organizada e acompanhem seu balanço financeiro por meio de gráficos e estatísticas detalhadas. Além disso, oferece notificações para lembrar do vencimento de despesas e faturas de cartão, permitindo um melhor controle financeiro. O FinWise também possibilita o cadastro de cartões bancários, a definição de limites de gastos por categoria e a personalização do tema do aplicativo. Outra funcionalidade importante é a criação de contas familiares compartilháveis, permitindo um gerenciamento financeiro coletivo.
 
 ## Equipe
+- **Erik Neves** - Frontend
 - **Gabriel Prudente** - Frontend
-- **Gabriel** - Frontend
 - **Gabriella de Lima** - Backend
 - **Nicolas Von Dolinger** - Backend
 
