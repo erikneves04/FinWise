@@ -1,20 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from "react";
+import Register from "./src/screens/Register"; 
+import * as SplashScreen from "expo-splash-screen";
+import { useCustomFonts } from "./src/utils/fonts"; 
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>FinWase - Sabedoria Finaceira</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const fontsLoaded = useCustomFonts();
+  const [isReady, setIsReady] = useState(false);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+      setIsReady(true);
+    }
+  }, [fontsLoaded]);
+
+  if (!isReady) {
+    return null;
+  }
+
+  return <Register />;
+}
