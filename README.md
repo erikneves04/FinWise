@@ -2,7 +2,7 @@
 
 ## Objetivo
 <p align="justify">
-   O **FinWise** é um aplicativo de gerenciamento financeiro pessoal que ajuda os usuários a controlar suas receitas e despesas, visualizar estatísticas detalhadas e receber notificações sobre vencimentos. Com um design intuitivo e funcionalidades avançadas, o aplicativo permite um acompanhamento preciso das finanças, ajudando a manter um orçamento equilibrado.
+   O <bold>FinWise</bold> é um aplicativo de gerenciamento financeiro pessoal que ajuda os usuários a controlar suas receitas e despesas, visualizar estatísticas detalhadas e receber notificações sobre vencimentos. Com um design intuitivo e funcionalidades avançadas, o aplicativo permite um acompanhamento preciso das finanças, ajudando a manter um orçamento equilibrado.
 </p>
 
 ## Principais Features
@@ -37,15 +37,33 @@
 </p>
 
 ## Backlog do Sprint
-1. Criar e editar uma conta
-   - Tarefa [responsável]
+1. Estrutura:
+   -
+   
+3. Eu como usuário, gostaria de criar e editar uma conta.
+   - Implementar a tela de registro de usuários [Gabriel Prudente]
+   - Implementar as rotas de cadastro de usuários na API []
+   - Implementar a tela de login []
+   - Implementar as rotas de login na API []
+   - Implementar a tela de edição de usuários [Gabriel Prudente]
+   - Implementar as rotas de edição de usuários []
 
-2. Cadastrar receitas
-   - Tarefa [responsável]
+4. Eu como usuário, gostaria de cadastrar minhas receitas no aplicativo.
+   - Implementar a tela de cadastro de receitas [Erik Neves]
+   - Implementar as rotas de cadastro de receitas na API []
+   - Implementar a tela de edição de receitas [Erik Neves]
+   - Implementar as rotas de edição de receitas na API []
+   - Implementar a tela de listagem de receitas [Erik Neves]
+   - Implementar as rotas de listagem de receitas na API []
   
-3. Cadastrar despesas
-   - Tarefa [responsável]
+5. Eu como usuário, gostaria de cadastrar minhas despesas no aplicativo.
+   - Implementar a tela de cadastro de despesa []
+   - Implementar as rotas de cadastro de despesas na API []
+   - Implementar a tela de edição de despesas []
+   - Implementar as rotas de edição de despesas na API []
+   - Implementar a tela de listagem de despesas []
+   - Implementar as rotas de listagem de despesas na API []
   
-4. Visualizar gráficos e estatísticas do balanço mensal
+6. Eu como usuário, gostaria de visualizar gráficos e estatísticas relacionadas ao meu balanço mensal de transações.
    - Tarefa [responsável]
 
