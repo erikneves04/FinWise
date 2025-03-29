@@ -5,7 +5,8 @@ import { useCustomFonts } from "./src/utils/fonts";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Register from "./src/screens/Register";
-import Receita from "./src/screens/CreateRevenue";
+import CadastroReceita from "./src/screens/CreateRevenue";
+import ListagemReceita from "./src/screens/ListRevenues"
 
 SplashScreen.preventAutoHideAsync();
 
@@ -15,7 +16,8 @@ function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Button title="Cadastro de Usuário" onPress={() => navigation.navigate("Register")} />
-      <Button title="Cadastro de Receita" onPress={() => navigation.navigate("Receita")} />
+      <Button title="Cadastro de Receita" onPress={() => navigation.navigate("Cadastro de receitas")} />
+      <Button title="Listagem de Receitas" onPress={() => navigation.navigate("Minhas receitas")} />
     </View>
   );
 }
@@ -40,7 +42,8 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Receita" component={Receita} />
+        <Stack.Screen name="Cadastro de receitas" component={CadastroReceita} />
+        <Stack.Screen name="Minhas receitas" component={ListagemReceita} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -22,7 +22,7 @@ const IncomeTypes = {
   OTHER: "Outros"
 };
 
-export default function RegisterIncome() {
+export default function RegisterIncome({ navigation }) {
   const [data, setData] = useState({
     name: "",
     value: "0,00",
@@ -163,11 +163,11 @@ export default function RegisterIncome() {
           width={70}
           buttonText="Cadastrar"
           action={onRegisterPress}
-          disabled={!isFormValid()} // Desabilitar o botão se os dados não forem válidos
+          //disabled={!isFormValid()}
         />
       </ButtonWrapper>
 
-      <RegisterContainer onPress={""}>
+      <RegisterContainer onPress={() => navigation.navigate("Minhas receitas")}>
         <SubtitleGrey>Ver receitas cadastradas?</SubtitleGrey>
         <SubtitleBlue> Acesse aqui!</SubtitleBlue>
       </RegisterContainer>
