@@ -17,20 +17,11 @@ const incomesMock = [
 export default function IncomeList({ navigation }) {
   const [incomes, setIncomes] = useState(incomesMock);
   const [viewMode, setViewMode] = useState("table"); // "table" ou "card"
-
+  //<TitleWrapper>
+  //      <Title>Receitas Cadastradas</Title>
+  //</TitleWrapper>
   return (
     <Background>
-      <TitleWrapper>
-        <Title>Receitas Cadastradas</Title>
-      </TitleWrapper>
-
-      {/* Botão para Alternar Visualização */}
-      <Pressable style={styles.toggleButton} onPress={() => setViewMode(viewMode === "table" ? "card" : "table")}>
-        <Text style={styles.toggleButtonText}>
-          Alternar para {viewMode === "table" ? "Lista" : "Tabela"}
-        </Text>
-      </Pressable>
-
       {viewMode === "table" ? (
         <ScrollView horizontal>
           <View>
@@ -69,6 +60,11 @@ export default function IncomeList({ navigation }) {
         />
       )}
 
+      {/* Botão para Alternar Visualização */}
+      <Pressable style={styles.toggleFab} onPress={() => setViewMode(viewMode === "table" ? "card" : "table")}>
+        <Ionicons name={viewMode === "table" ? "grid" : "list"} size={28} color="white" />
+      </Pressable>
+
       {/* Botão Flutuante para Adicionar Receita */}
       <Pressable style={styles.fab} onPress={() => navigation.navigate("Cadastro de receitas")}>
         <Ionicons name="add" size={32} color="white" />
@@ -78,24 +74,14 @@ export default function IncomeList({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  toggleButton: {
-    backgroundColor: "#007AFF",
-    padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-    margin: 10,
-  },
-  toggleButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
   tableHeader: {
     flexDirection: "row",
     backgroundColor: "#007bff",
     paddingVertical: 10,
     paddingHorizontal: 5,
     borderRadius: 5,
-    width: screenWidth - 5,
+    width: screenWidth - 10,
+    marginTop: 15,
   },
   headerText: {
     flex: 1,
@@ -114,7 +100,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
-    width: screenWidth - 5,
+    width: screenWidth - 10,
   },
   cell: {
     flex: 1,
@@ -131,6 +117,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     width: "90%",
     alignSelf: "center",
+    width: screenWidth - 10,
   },
   cardTitle: {
     fontSize: 18,
@@ -148,6 +135,18 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 5,
+  },
+  toggleFab: {
+    position: "absolute",
+    left: 20,
+    bottom: 20,
+    backgroundColor: "#007AFF",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
     elevation: 5,
