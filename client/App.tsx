@@ -1,28 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { View, Button, StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { useAuth } from "./src/services/context/AuthContext";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 import { useCustomFonts } from "./src/utils/fonts";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+
 import Register from "./src/screens/Register";
-import CadastroReceita from "./src/screens/CreateRevenue";
-import ListagemReceita from "./src/screens/ListRevenues"
+import RegisterIncome from "./src/screens/CreateRevenue";
+import IncomeList from "./src/screens/ListRevenues";
+import HomePage from "./src/screens/HomePage";
+import Login from "./src/screens/Login";
 
-SplashScreen.preventAutoHideAsync();
+export type RootStackParamList = {
+  Register: undefined;
+  EditData: undefined;
+  Login: undefined;  
+  ForgotPassword: undefined;
+  ForgotPasswordConfirm: undefined;
+  ConfirmRegister: undefined;
+  HomePage: { reset?: boolean };
+  MyData: undefined;
+  RegisterIncome: undefined;
+  IncomeList: undefined;
+};
 
-const Stack = createStackNavigator();
+export default function Routes() {
 
-function HomeScreen({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Button title="Cadastro de Usuário" onPress={() => navigation.navigate("Register")} />
-      <Button title="Cadastro de Receita" onPress={() => navigation.navigate("Cadastro de receitas")} />
-      <Button title="Listagem de Receitas" onPress={() => navigation.navigate("Minhas receitas")} />
-    </View>
-  );
-}
-
-export default function App() {
   const fontsLoaded = useCustomFonts();
   const [isReady, setIsReady] = useState(false);
 
@@ -37,22 +40,19 @@ export default function App() {
     return null;
   }
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Cadastro de receitas" component={CadastroReceita} />
-        <Stack.Screen name="Minhas receitas" component={ListagemReceita} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  const { Navigator, Screen } = createStackNavigator<RootStackParamList>();
+    return (
+      <NavigationContainer>
+        <Navigator
+        initialRouteName= "Register"
+        screenOptions = {{ headerShown: false }}
+      >
+          <Screen name="Register" component = { Register } />
+          <Screen name="Login" component = { Login } />
+          <Screen name="HomePage" component = { HomePage } />
+          <Screen name="RegisterIncome" component = { RegisterIncome } />
+          <Screen name="IncomeList" component = { IncomeList } />
+        </Navigator>
+      </NavigationContainer>
+    );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

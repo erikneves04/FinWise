@@ -34,5 +34,5 @@ export const RegisterContainer = styled.TouchableOpacity`
 
 export const MainView = styled.View`
   align-items: center;
-  top: ${hp(3)}px;
+  top: ${hp(2)}px;
 `;

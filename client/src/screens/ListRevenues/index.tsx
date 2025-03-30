@@ -2,8 +2,11 @@ import { useState } from "react";
 import { FlatList, Text, View, Pressable, StyleSheet, Dimensions, ScrollView } from "react-native";
 import { Background } from "../../components/Background";
 import { TitleWrapper, ButtonWrapper } from "./styles";
-import { Title } from "../../styles.Global";
 import { Ionicons } from "@expo/vector-icons";
+import { Title } from "../styles.Global";
+
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from '../../../App';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -14,12 +17,18 @@ const incomesMock = [
   { id: "3", name: "Investimentos", value: "1.200,00", date: "10/03/2025", type: "Outros" },
 ];
 
-export default function IncomeList({ navigation }:any) {
+type ScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "IncomeList"
+>;
+type Props = {
+  navigation: ScreenNavigationProp;
+};
+
+export default function IncomeList({ navigation } : Props) {
   const [incomes, setIncomes] = useState(incomesMock);
-  const [viewMode, setViewMode] = useState("table"); // "table" ou "card"
-  //<TitleWrapper>
-  //      <Title>Receitas Cadastradas</Title>
-  //</TitleWrapper>
+  const [viewMode, setViewMode] = useState("table");
+
   return (
     <Background>
       {viewMode === "table" ? (

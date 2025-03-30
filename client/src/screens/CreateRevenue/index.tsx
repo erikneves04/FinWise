@@ -1,17 +1,44 @@
 import { useState } from "react";
 import { Text, View, Pressable, StyleSheet, Dimensions, TextInput, TouchableOpacity, Platform } from "react-native";
 import { Background } from "../../components/Background";
+
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, TextInput, Platform, Pressable } from 'react-native';
+import { useState } from 'react';
+import { Background } from '../../components/Background';
+import {
+  TextFieldWrapper,
+  TitleWrapper,
+  ButtonWrapper,
+  RegisterContainer,
+} from "./styles";
+
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from '../../../App';
+
+import { NavigationButton } from '../../components/NavigationButton';
+import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
+import { TextField } from '../../components/TextField';
+import { Picker } from '@react-native-picker/picker';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from "moment";
 import { RegisterContainer } from "./styles";
 import { SubtitleBlue, SubtitleGrey } from "../../styles.Global";
 
 const screenWidth = Dimensions.get("window").width;
-
 const IncomeTypes = ['Salário', 'Freelancer', 'Fixo', 'Bônus', 'Outros']
 
-export default function IncomeForm({ navigation }:any) {
-  const [incomeData, setIncomeData] = useState({
+type ScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "RegisterIncome"
+>;
+type Props = {
+  navigation: ScreenNavigationProp;
+};
+
+export default function RegisterIncome({ navigation }: Props) {
+  const [data, setData] = useState({
     name: "",
     value: "",
     date: "",
