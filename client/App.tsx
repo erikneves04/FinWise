@@ -9,6 +9,7 @@ import Register from "./src/screens/Register";
 import RegisterIncome from "./src/screens/CreateRevenue";
 import IncomeList from "./src/screens/ListRevenues";
 import HomePage from "./src/screens/HomePage";
+import Login from "./src/screens/Login";
 
 export type RootStackParamList = {
   Register: undefined;
@@ -47,6 +48,7 @@ export default function Routes() {
         screenOptions = {{ headerShown: false }}
       >
           <Screen name="Register" component = { Register } />
+          <Screen name="Login" component = { Login } />
           <Screen name="HomePage" component = { HomePage } />
           <Screen name="RegisterIncome" component = { RegisterIncome } />
           <Screen name="IncomeList" component = { IncomeList } />
