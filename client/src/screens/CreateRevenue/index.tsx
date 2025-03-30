@@ -10,6 +10,7 @@ import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { TitleWrapper } from '../Register/styles';
+import LogoItem from '../../assets/svg/logo';
 
 const screenWidth = Dimensions.get("window").width;
 const IncomeTypes = ['Salário', 'Freelancer', 'Fixo', 'Bônus', 'Outros']
@@ -72,9 +73,7 @@ export default function RegisterIncome({ navigation }: Props) {
         <Text>Criar receita</Text>
       </TitleWrapper>
 
-      <View style={styles.container}>
-        <Text style={styles.text}>Logo</Text>
-      </View>
+      <LogoItem height={120} />
 
       <View style={styles.formContainer}>
         <View style={styles.inputRow}>
