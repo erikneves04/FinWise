@@ -15,7 +15,7 @@ export const Divider = styled.View`
 export const Title = styled.Text`
   font-size: ${RFValue(24, hp(100))}px;
   color: #000;
-  font-family: "Quicksand-Regular";
+  font-family: "Quicksand-Medium";
 `;
 
 export const TitleGrey = styled.Text`

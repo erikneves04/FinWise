@@ -31,8 +31,3 @@ export const RegisterContainer = styled.TouchableOpacity`
   margin-top: ${hp(1)}px;
   flex-direction: row;
 `;
-
-export const MainView = styled.View`
-  align-items: center;
-  top: ${hp(3)}px;
-`;

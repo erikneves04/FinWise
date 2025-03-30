@@ -13,7 +13,6 @@ import {
   ButtonWrapper,
   RegisterContainer,
   SubtitleWrapper,
-  LogoView,
   MainView
 } from "./styles";
 
@@ -24,13 +23,13 @@ import { TextField } from '../../components/TextField';
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
-  "Register"
+  "Login"
 >;
 type Props = {
   navigation: ScreenNavigationProp;
 };
 
-export default function Register({ navigation }: Props) {
+export default function Login({ navigation }: Props) {
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -66,22 +65,11 @@ export default function Register({ navigation }: Props) {
   return (
     <Background>
       <MainView>
-        <LogoItem height={120}/>
+        <LogoItem height={120} />
 
         <TitleWrapper>
-          <Title>Cadastro de conta</Title>
+          <Title>Entre na sua conta</Title>
         </TitleWrapper>
-
-        <TextFieldWrapper>
-          <TextField
-            required
-            label="Nome Completo"
-            placeholder="Digite aqui seu nome completo"
-            autoCapitalize="words"
-            onChange={(text) => updateRegisterData({ name: text })}
-            value={data.name}
-          />
-        </TextFieldWrapper>
 
         <TextFieldWrapper>
           <TextField
@@ -105,39 +93,16 @@ export default function Register({ navigation }: Props) {
             onChange={(text) => updateRegisterData({ password: text })}
             value={data.password}
           />
-          <TextField
-            required
-            placeholder="Digite aqui novamente a sua senha"
-            secureTextEntry
-            autoCapitalize="none"
-            onChange={setConfirmPassword}
-            value={confirmPassword}
-          />
-        </TextFieldWrapper>
-
-        <TextFieldWrapper>
-          <TextField
-            required
-            label="Data de nascimento"
-            placeholder="Digite aqui a sua data de nascimento"
-            value={date}
-            onChange={setDate}
-            keyboardType="numeric"
-          />
         </TextFieldWrapper>
 
         <ButtonWrapper>
           <NavigationButton
             height={40}
             width={70}
-            buttonText="Cadastrar"
+            buttonText="Entrar"
             action={onRegisterPress}
           />
         </ButtonWrapper>
-        <RegisterContainer onPress={onLoginPress}>
-          <SubtitleGrey>Já tem conta?</SubtitleGrey>
-          <SubtitleBlue> Faça login!</SubtitleBlue>
-        </RegisterContainer>
       </MainView>
     </Background>
   );

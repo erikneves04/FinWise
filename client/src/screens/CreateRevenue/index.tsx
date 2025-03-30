@@ -9,8 +9,11 @@ import {
   RegisterContainer,
 } from "./styles";
 
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from '../../../App';
+
 import { NavigationButton } from '../../components/NavigationButton';
-import { SubtitleBlue, SubtitleGrey, Title } from '../../styles.Global';
+import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
 import { TextField } from '../../components/TextField';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -22,7 +25,15 @@ const IncomeTypes = {
   OTHER: "Outros"
 };
 
-export default function RegisterIncome({ navigation }) {
+type ScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "RegisterIncome"
+>;
+type Props = {
+  navigation: ScreenNavigationProp;
+};
+
+export default function RegisterIncome({ navigation }: Props) {
   const [data, setData] = useState({
     name: "",
     value: "0,00",
