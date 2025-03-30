@@ -14,7 +14,7 @@ const incomesMock = [
   { id: "3", name: "Investimentos", value: "1.200,00", date: "10/03/2025", type: "Outros" },
 ];
 
-export default function IncomeList({ navigation }) {
+export default function IncomeList({ navigation }:any) {
   const [incomes, setIncomes] = useState(incomesMock);
   const [viewMode, setViewMode] = useState("table"); // "table" ou "card"
   //<TitleWrapper>
@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
-    width: "90%",
     alignSelf: "center",
     width: screenWidth - 10,
   },
