@@ -40,7 +40,7 @@ export default function HomePage({navigation} : Props) {
 
   const onRevenuePress = async () => {
     try {
-      navigation.navigate("RegisterIncome");
+      navigation.navigate("IncomeList");
     } catch (err: any) {
      
     }
@@ -48,7 +48,7 @@ export default function HomePage({navigation} : Props) {
 
   const onCreateRevenuePress = async () => {
     try {
-      navigation.navigate("IncomeList");
+      navigation.navigate("RegisterIncome");
     } catch (err: any) {
      
     }

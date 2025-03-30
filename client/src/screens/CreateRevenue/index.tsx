@@ -1,30 +1,15 @@
-import { useState } from "react";
-import { Text, View, Pressable, StyleSheet, Dimensions, TextInput, TouchableOpacity, Platform } from "react-native";
-import { Background } from "../../components/Background";
-
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Platform, Pressable } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Platform, Pressable, Dimensions, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import { Background } from '../../components/Background';
-import {
-  TextFieldWrapper,
-  TitleWrapper,
-  ButtonWrapper,
-  RegisterContainer,
-} from "./styles";
+import { RegisterContainer } from "./styles";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../../../App';
 
-import { NavigationButton } from '../../components/NavigationButton';
 import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
-import { TextField } from '../../components/TextField';
-import { Picker } from '@react-native-picker/picker';
-
 import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from "moment";
-import { RegisterContainer } from "./styles";
-import { SubtitleBlue, SubtitleGrey } from "../../styles.Global";
+import moment from 'moment';
+import { TitleWrapper } from '../Register/styles';
 
 const screenWidth = Dimensions.get("window").width;
 const IncomeTypes = ['Salário', 'Freelancer', 'Fixo', 'Bônus', 'Outros']
@@ -38,7 +23,7 @@ type Props = {
 };
 
 export default function RegisterIncome({ navigation }: Props) {
-  const [data, setData] = useState({
+  const [incomeData, setIncomeData] = useState({
     name: "",
     value: "",
     date: "",
@@ -83,6 +68,10 @@ export default function RegisterIncome({ navigation }: Props) {
 
   return (
     <Background>
+      <TitleWrapper>
+        <Text>Criar receita</Text>
+      </TitleWrapper>
+
       <View style={styles.container}>
         <Text style={styles.text}>Logo</Text>
       </View>
@@ -142,7 +131,7 @@ export default function RegisterIncome({ navigation }: Props) {
           <Text style={styles.saveButtonText}>Cadastrar</Text>
         </Pressable>
 
-        <RegisterContainer onPress={() => navigation.navigate("Minhas receitas")}>
+        <RegisterContainer onPress={() => navigation.navigate("IncomeList")}>
           <SubtitleGrey>Ver receitas cadastradas?</SubtitleGrey>
           <SubtitleBlue> Acesse aqui!</SubtitleBlue>
         </RegisterContainer>

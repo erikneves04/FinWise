@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { FlatList, Text, View, Pressable, StyleSheet, Dimensions, ScrollView } from "react-native";
 import { Background } from "../../components/Background";
-import { TitleWrapper, ButtonWrapper } from "./styles";
 import { Ionicons } from "@expo/vector-icons";
-import { Title } from "../styles.Global";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../../../App';
@@ -75,7 +73,7 @@ export default function IncomeList({ navigation } : Props) {
       </Pressable>
 
       {/* Botão Flutuante para Adicionar Receita */}
-      <Pressable style={styles.fab} onPress={() => navigation.navigate("Cadastro de receitas")}>
+      <Pressable style={styles.fab} onPress={() => navigation.navigate("RegisterIncome")}>
         <Ionicons name="add" size={32} color="white" />
       </Pressable>
     </Background>
