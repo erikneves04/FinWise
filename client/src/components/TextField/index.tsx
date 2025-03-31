@@ -1,103 +1,31 @@
-import { MaskInputProps } from "react-native-mask-input";
-import MaskInput from "react-native-mask-input";
+import { useState } from "react";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import MaskInput, { MaskInputProps } from "react-native-mask-input";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
-import { StyleSheet, View } from "react-native";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+
 import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-
-import { DynamicInputView, InputView, Label, RequiredField } from "../TextField/styles";
+  DynamicInputView,
+  InputView,
+  Label,
+  RequiredField,
+} from "../TextField/styles";
 import { TextStyle } from "react-native";
-import { useCustomFonts } from "../../utils/fonts";
 
 interface Props {
   required?: boolean;
   secureTextEntry?: boolean;
   value: string;
   onChange: (masked: string, unmasked: string) => void;
-  onContentSizeChange?: (event: any) => void;
   placeholder: string;
-  mask?: (string | RegExp)[] | null;
+  isDatePicker?: boolean;
   width?: string;
   autoCapitalize?: "none" | "sentences" | "words" | "characters" | undefined;
-  textContentType?:
-  | "none"
-  | "URL"
-  | "addressCity"
-  | "addressCityAndState"
-  | "addressState"
-  | "countryName"
-  | "creditCardNumber"
-  | "emailAddress"
-  | "familyName"
-  | "fullStreetAddress"
-  | "givenName"
-  | "jobTitle"
-  | "location"
-  | "middleName"
-  | "name"
-  | "namePrefix"
-  | "nameSuffix"
-  | "nickname"
-  | "organizationName"
-  | "postalCode"
-  | "streetAddressLine1"
-  | "streetAddressLine2"
-  | "sublocality"
-  | "telephoneNumber"
-  | "username"
-  | "password"
-  | "newPassword"
-  | "oneTimeCode"
-  | undefined;
-  keyboardType?:
-  | "default"
-  | "number-pad"
-  | "decimal-pad"
-  | "numeric"
-  | "email-address"
-  | "phone-pad"
-  | undefined;
+  textContentType?: string;
+  keyboardType?: string;
   autoCorrect?: boolean;
-  autoComplete?:
-  | "birthdate-day"
-  | "birthdate-full"
-  | "birthdate-month"
-  | "birthdate-year"
-  | "cc-csc"
-  | "cc-exp"
-  | "cc-exp-day"
-  | "cc-exp-month"
-  | "cc-exp-year"
-  | "cc-number"
-  | "email"
-  | "gender"
-  | "name"
-  | "name-family"
-  | "name-given"
-  | "name-middle"
-  | "name-middle-initial"
-  | "name-prefix"
-  | "name-suffix"
-  | "password"
-  | "password-new"
-  | "postal-address"
-  | "postal-address-country"
-  | "postal-address-extended"
-  | "postal-address-extended-postal-code"
-  | "postal-address-locality"
-  | "postal-address-region"
-  | "postal-code"
-  | "street-address"
-  | "sms-otp"
-  | "tel"
-  | "tel-country-code"
-  | "tel-national"
-  | "tel-device"
-  | "username"
-  | "username-new"
-  | "off";
+  autoComplete?: string;
   maxLength?: number;
   editable?: boolean;
   multiline?: boolean;
@@ -105,12 +33,7 @@ interface Props {
   label?: string;
   fontSize?: number;
   fontWeight?: number;
-  color?: boolean;
   marginRight?: number;
-}
-
-interface Styles {
-  inputStyle: MaskInputProps;
 }
 
 export function TextField({
@@ -118,9 +41,8 @@ export function TextField({
   secureTextEntry = false,
   value = "",
   onChange,
-  onContentSizeChange,
   placeholder,
-  mask,
+  isDatePicker = false,
   width = "70",
   autoCapitalize = "sentences",
   textContentType = "none",
@@ -136,42 +58,82 @@ export function TextField({
   fontWeight = 300,
   marginRight,
 }: Props) {
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const styles = StyleSheet.create({
     inputStyle: {
-      fontWeight: fontWeight as TextStyle["fontWeight"], 
+      fontWeight: fontWeight as TextStyle["fontWeight"],
       color: "black",
       width: wp(width ? parseFloat(width) - 10 : 100),
       marginLeft: 10,
       fontSize: fontSize,
-      fontFamily: "Quicksand-Regular", // Usando a fonte Quicksand
-    } as TextStyle, // Garante que siga a tipagem correta
+      fontFamily: "Quicksand-Regular",
+    } as TextStyle,
+    placeholderStyle: {
+      color: "gray",
+      fontSize: fontSize,
+      fontFamily: "Quicksand-Regular",
+    },
   });
 
   return (
-    <View style={{ marginBottom: 5, marginRight: marginRight !== undefined ? marginRight : 0 }}>
+    <View style={{ marginBottom: 5, marginRight: marginRight ?? 0 }}>
       {label && <Label>{label}</Label>}
       <DynamicInputView width={width} height={inputHeight}>
         {required && <RequiredField>*</RequiredField>}
-        <MaskInput
-          value={value}
-          placeholder={placeholder}
-          style={styles.inputStyle}
-          onChangeText={onChange}
-          onContentSizeChange={onContentSizeChange}
-          mask={mask ?? undefined}
-          secureTextEntry={secureTextEntry}
-          autoCapitalize={autoCapitalize}
-          textContentType={textContentType}
-          keyboardType={keyboardType}
-          autoCorrect={autoCorrect}
-          autoComplete={autoComplete}
-          maxLength={maxLength}
-          editable={editable}
-          multiline={multiline}
-          scrollEnabled={true}
-        />
+
+        {isDatePicker ? (
+          <Pressable
+            onPress={() => setShowDatePicker(true)}
+            style={{ padding: 10 }}
+          >
+            {value ? (
+              <Text style={styles.inputStyle}>{value}</Text>
+            ) : (
+              <Text style={styles.placeholderStyle}>{placeholder}</Text>
+            )}
+          </Pressable>
+        ) : (
+          <MaskInput
+            value={value}
+            placeholder={placeholder}
+            style={styles.inputStyle}
+            onChangeText={onChange}
+            secureTextEntry={secureTextEntry}
+            autoCapitalize={autoCapitalize}
+            textContentType={textContentType}
+            keyboardType={keyboardType}
+            autoCorrect={autoCorrect}
+            autoComplete={autoComplete}
+            maxLength={maxLength}
+            editable={editable}
+            multiline={multiline}
+            scrollEnabled={true}
+          />
+        )}
       </DynamicInputView>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={value ? new Date(value) : new Date()}
+          mode="date"
+          display={Platform.OS === "ios" ? "spinner" : "default"}
+          onChange={(event, selectedDate) => {
+            setShowDatePicker(false);
+            if (selectedDate) {
+              const localDate = new Date(
+                selectedDate.getFullYear(),
+                selectedDate.getMonth(),
+                selectedDate.getDate()
+              );
+          
+              const formattedDate = localDate.toISOString().split("T")[0];
+              onChange(formattedDate, formattedDate);
+            }
+          }}         
+          
+        />
+      )}
     </View>
   );
 }
