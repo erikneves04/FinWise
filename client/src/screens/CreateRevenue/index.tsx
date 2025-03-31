@@ -1,29 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Platform, Pressable } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Platform, Pressable, Dimensions, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import { Background } from '../../components/Background';
-import {
-  TextFieldWrapper,
-  TitleWrapper,
-  ButtonWrapper,
-  RegisterContainer,
-} from "./styles";
+import { RegisterContainer } from "./styles";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../../../App';
 
-import { NavigationButton } from '../../components/NavigationButton';
 import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
-import { TextField } from '../../components/TextField';
-import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
+import { TitleWrapper } from '../Register/styles';
+import LogoItem from '../../assets/svg/logo';
 
-const IncomeTypes = {
-  SALARY: "Salário",
-  BONUS: "Bônus",
-  GIFT: "Presente",
-  OTHER: "Outros"
-};
+const screenWidth = Dimensions.get("window").width;
+const IncomeTypes = ['Salário', 'Freelancer', 'Fixo', 'Bônus', 'Outros']
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -34,154 +24,117 @@ type Props = {
 };
 
 export default function RegisterIncome({ navigation }: Props) {
-  const [data, setData] = useState({
+  const [incomeData, setIncomeData] = useState({
     name: "",
-    value: "0,00",
-    date: new Date(),
-    type: Object.keys(IncomeTypes)[0],
+    value: "",
+    date: "",
+    type: "",
   });
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  function updateIncomeData(newData) {
-    setData((prevData) => ({ ...prevData, ...newData }));
-  }
-
-  const onRegisterPress = async () => {
-    if (!data.name || !data.value || !data.date) {
+  const onCreatePress = async () => {
+    if (!incomeData.name || !incomeData.value || !incomeData.date || !incomeData.type) {
       alert("Preencha todos os campos corretamente!");
       return;
     }
     
-    if (data.value == "0,00") {
+    if (incomeData.value == "0,00") {
       alert("É necessário informar o valor da receita!");
       return;
     }
-
-    // Implementar lógica de cadastro
+    
+    // TODO: Lógica de cadastro
+    alert("BOTÃO DE CADASTRO ACIONADO MAS AINDA NÃO IMPLEMENTADO!");
   };
 
-  // Validação do valor (permite apenas números e duas casas decimais)
-  const handleValueChange = (text) => {
-    // Remover todos os caracteres não numéricos
+  const handleValueChange = (text:any) => {
     let numericText = text.replace(/[^0-9]/g, "");
-  
-    // Garantir que sempre tenha pelo menos duas casas decimais
-    let decimalPart = numericText.slice(-2); // Parte decimal
-    let integerPart = numericText.slice(0, -2); // Parte inteira
-  
-    // Remover zeros à esquerda da parte inteira
-    integerPart = integerPart.replace(/^0+/, "");
-  
-    // Se a parte inteira estiver vazia (no caso de ser apenas zero ou vazio), ajustar para '0'
-    if (integerPart === "") {
-      integerPart = "0";
-    }
-  
-    // Formatar a parte inteira com separadores de milhar
+    let decimalPart = numericText.slice(-2);
+    let integerPart = numericText.slice(0, -2).replace(/^0+/, "");
+    if (integerPart === "") integerPart = "0";
     integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  
-    // Se a parte decimal estiver vazia, adicionar "00"
-    if (!decimalPart) {
-      decimalPart = "00";
-    }
-  
-    // Concatenar a parte inteira e decimal
+    if (!decimalPart) decimalPart = "00";
     const formattedValue = `${integerPart},${decimalPart}`;
-  
-    // Atualizar o estado com o valor formatado
-    updateIncomeData({ value: formattedValue });
-  };  
-
-  // Verificar se os dados são válidos
-  const isFormValid = () => {
-    const isValueValid = !isNaN(data.value) && data.value.trim() !== "" && parseFloat(data.value) > 0;
-    const isDateValid = data.date instanceof Date && !isNaN(data.date);
-    const isNameValid = data.name.trim() !== "";
-    return isValueValid && isDateValid && isNameValid;
+    setIncomeData({ ...incomeData, value: formattedValue });
   };
 
-  // Formatar a data para exibição
-  const formatDate = (date) => {
-    return date.toLocaleDateString('pt-BR');
+  const formatDate = (date:any) => {
+    return moment(date).format("DD/MM/YYYY");
+  };
+
+  const updateIncomeData = (newData:any) => {
+    setIncomeData({ ...incomeData, ...newData });
   };
 
   return (
     <Background>
       <TitleWrapper>
-        <Title>Cadastro de Receita</Title>
+        <Text>Criar receita</Text>
       </TitleWrapper>
 
-      <View style={styles.container}>
-        <Text style={styles.text}>Logo</Text>
-      </View>
+      <LogoItem height={120} />
 
-      <TextFieldWrapper>
-        <TextField
-          required
-          label="Nome da Receita"
-          placeholder="Digite o nome da receita"
-          autoCapitalize="words"
-          onChange={(text) => updateIncomeData({ name: text })}
-          value={data.name}
-        />
-      </TextFieldWrapper>
-      
-      <TextFieldWrapper>
-        <TextField
-          required
-          label="Valor (R$)"
-          placeholder="Digite o valor"
-          keyboardType="decimal-pad"
-          onChange={handleValueChange}
-          value={data.value}
-        />
-      </TextFieldWrapper>
-
-      <TextFieldWrapper>
-        <Text style={styles.label}>Data de Efetivação</Text>
-        <Pressable onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
-          <Text style={styles.dateText}>{formatDate(data.date)}</Text>
-        </Pressable>
-        {showDatePicker && (
-          <DateTimePicker
-            value={data.date}
-            mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
-              if (selectedDate) updateIncomeData({ date: selectedDate });
-            }}
+      <View style={styles.formContainer}>
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Nome:</Text>
+          <TextInput
+            style={styles.input}
+            value={incomeData.name}
+            onChangeText={(text) => setIncomeData({ ...incomeData, name: text })}
           />
-        )}
-      </TextFieldWrapper>
+        </View>
 
-      <TextFieldWrapper>
-        <Text style={styles.label}>Tipo de Receita</Text>
-        <Picker
-          selectedValue={data.type}
-          onValueChange={(itemValue) => updateIncomeData({ type: itemValue })}
-        >
-          {Object.entries(IncomeTypes).map(([key, label]) => (
-            <Picker.Item key={key} label={label} value={key} />
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Valor:</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={incomeData.value}
+            onChangeText={handleValueChange}
+          />
+        </View>
+
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Data:</Text>
+          <Pressable onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
+            <Text style={styles.dateText}>{incomeData.date ? formatDate(incomeData.date) : 'Selecionar data'}</Text>
+          </Pressable>
+          {showDatePicker && (
+            <DateTimePicker
+              value={incomeData.date ? new Date(incomeData.date) : new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (selectedDate) updateIncomeData({ date: selectedDate });
+              }}
+            />
+          )}
+        </View>
+
+        <Text style={styles.typeLabel}>Tipo:</Text>
+        <View style={styles.typeContainer}>
+          {IncomeTypes.map((type) => (
+            <TouchableOpacity
+              key={type}
+              style={[styles.typeButton, incomeData.type === type && styles.selectedType]}
+              onPress={() => setIncomeData({ ...incomeData, type })}
+            >
+              <Text style={styles.typeText}>{type}</Text>
+            </TouchableOpacity>
           ))}
-        </Picker>
-      </TextFieldWrapper>;
+        </View>
 
-      <ButtonWrapper>
-        <NavigationButton
-          height={40}
-          width={70}
-          buttonText="Cadastrar"
-          action={onRegisterPress}
-          //disabled={!isFormValid()}
-        />
-      </ButtonWrapper>
+        <Pressable style={styles.saveButton} onPress={onCreatePress}>
+          <Text style={styles.saveButtonText}>Cadastrar</Text>
+        </Pressable>
 
-      <RegisterContainer onPress={() => navigation.navigate("Minhas receitas")}>
-        <SubtitleGrey>Ver receitas cadastradas?</SubtitleGrey>
-        <SubtitleBlue> Acesse aqui!</SubtitleBlue>
-      </RegisterContainer>
+        <RegisterContainer onPress={() => navigation.navigate("IncomeList")}>
+          <SubtitleGrey>Ver receitas cadastradas?</SubtitleGrey>
+          <SubtitleBlue> Acesse aqui!</SubtitleBlue>
+        </RegisterContainer>
+      </View>
     </Background>
   );
 }
@@ -198,19 +151,74 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center', 
   },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
+  formContainer: {
+    padding: 20,
   },
-  dateInput: {
-    padding: 10,
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    width: screenWidth - 20
+  },
+  label: {
+    textAlign: "right",
+    width: 80,
+    marginRight: 10,
+    fontWeight: "bold",
+  },
+  input: {
+    flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
+    padding: 8,
     borderRadius: 5,
     backgroundColor: "#fff",
   },
+  dateInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 8,
+    borderRadius: 5,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+  },
   dateText: {
     fontSize: 16,
+    color: "#ccc",
+  },
+  typeLabel: {
+    fontWeight: "bold",
+    marginBottom: 5,
+    marginLeft: 2,
+    marginRight: 2,
+  },
+  typeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 20,
+  },
+  typeButton: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 5,
+  },
+  selectedType: {
+    backgroundColor: "black",
+  },
+  typeText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  saveButton: {
+    backgroundColor: "#007bff",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  saveButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
