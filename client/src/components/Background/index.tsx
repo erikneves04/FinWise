@@ -1,11 +1,17 @@
-import { View, StyleSheet } from "react-native";
-
+import { ImageBackground, StyleSheet} from "react-native";
 interface Props {
   children: React.ReactNode;
 }
 
 export function Background({ children }: Props) {
-  return <View style={styles.container}>{children}</View>;
+  return (
+    <ImageBackground
+      source={require('../../assets/background.png')}
+      style={styles.container}
+    >
+      {children}
+    </ImageBackground>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -13,6 +19,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#AFCBFF", 
-  },
+    backgroundColor: "white",
+  }
 });
