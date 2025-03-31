@@ -1,16 +1,20 @@
 import { StyleSheet, Text, View, TextInput, Platform, Pressable, Dimensions, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import { Background } from '../../components/Background';
-import { RegisterContainer } from "./styles";
+import { ButtonWrapper, HeaderView, RegisterContainer, RegisterRevenueButton, RegisterRevenueText, TextFieldWrapper, Title, TitleWrapper, TypeButton, TypeContainer, TypeLabel, TypeText } from "./styles";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../../../App';
 
-import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
+import { SubtitleBlue, SubtitleGrey } from '../styles.Global';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
-import { TitleWrapper } from '../Register/styles';
 import LogoItem from '../../assets/svg/logo';
+import BagOfMoney from '../../assets/svg/bagOfMoney';
+import { Modal } from '../../components/Modal';
+import { TextField } from '../../components/TextField';
+import { formatInputDate, handleValueChange } from '../../utils/functions';
+import { NavigationButton } from '../../components/NavigationButton';
 
 const screenWidth = Dimensions.get("window").width;
 const IncomeTypes = ['Salário', 'Freelancer', 'Fixo', 'Bônus', 'Outros']
@@ -38,104 +42,110 @@ export default function RegisterIncome({ navigation }: Props) {
       alert("Preencha todos os campos corretamente!");
       return;
     }
-    
+
     if (incomeData.value == "0,00") {
       alert("É necessário informar o valor da receita!");
       return;
     }
-    
+
     // TODO: Lógica de cadastro
     alert("BOTÃO DE CADASTRO ACIONADO MAS AINDA NÃO IMPLEMENTADO!");
   };
 
-  const handleValueChange = (text:any) => {
-    let numericText = text.replace(/[^0-9]/g, "");
-    let decimalPart = numericText.slice(-2);
-    let integerPart = numericText.slice(0, -2).replace(/^0+/, "");
-    if (integerPart === "") integerPart = "0";
-    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    if (!decimalPart) decimalPart = "00";
-    const formattedValue = `${integerPart},${decimalPart}`;
-    setIncomeData({ ...incomeData, value: formattedValue });
-  };
-
-  const formatDate = (date:any) => {
+  const formatDate = (date: any) => {
     return moment(date).format("DD/MM/YYYY");
   };
 
-  const updateIncomeData = (newData:any) => {
+  const onRegisterRevenuePress = async () => {
+    navigation.navigate("IncomeList")
+  }
+
+  const updateIncomeData = (newData: any) => {
     setIncomeData({ ...incomeData, ...newData });
   };
 
   return (
     <Background>
-      <TitleWrapper>
-        <Text>Criar receita</Text>
-      </TitleWrapper>
+      <Modal height='73'>
+        <TitleWrapper>
+          <HeaderView>
+            <BagOfMoney height={50} width={40} />
+            <Title>Criar receita</Title>
+          </HeaderView>
+        </TitleWrapper>
 
-      <LogoItem height={120} />
-
-      <View style={styles.formContainer}>
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Nome:</Text>
-          <TextInput
-            style={styles.input}
+        <TextFieldWrapper>
+          <TextField
+            required
+            label="Receita"
+            placeholder="Digite aqui o nome da receita"
+            autoCapitalize="words"
+            onChange={(text) => setIncomeData({ ...incomeData, name: text })}
             value={incomeData.name}
-            onChangeText={(text) => setIncomeData({ ...incomeData, name: text })}
           />
-        </View>
+        </TextFieldWrapper>
 
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Valor:</Text>
-          <TextInput
-            style={styles.input}
+        <TextFieldWrapper>
+          <TextField
+            required
+            label="Valor"
+            placeholder="Digite aqui o valor da receita"
+            autoCapitalize="words"
             keyboardType="numeric"
+            onChange={(text: string) =>
+              setIncomeData((prevData) => ({
+                ...prevData,
+                value: handleValueChange(text),
+              }))
+            }
             value={incomeData.value}
-            onChangeText={handleValueChange}
           />
-        </View>
+        </TextFieldWrapper>
 
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Data:</Text>
-          <Pressable onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
-            <Text style={styles.dateText}>{incomeData.date ? formatDate(incomeData.date) : 'Selecionar data'}</Text>
-          </Pressable>
-          {showDatePicker && (
-            <DateTimePicker
-              value={incomeData.date ? new Date(incomeData.date) : new Date()}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) updateIncomeData({ date: selectedDate });
-              }}
-            />
-          )}
-        </View>
+        <TextFieldWrapper>
+          <TextField
+            required
+            label="Data"
+            placeholder="Selecionar data"
+            value={incomeData.date ? formatDate(incomeData.date) : ""}
+            onChange={(masked, unmasked) =>
+              setIncomeData((prevData) => ({
+                ...prevData,
+                date: unmasked,
+              }))
+            }
+            isDatePicker={true}
+          />
+        </TextFieldWrapper>
 
-        <Text style={styles.typeLabel}>Tipo:</Text>
-        <View style={styles.typeContainer}>
+        <TypeLabel>Tipo:</TypeLabel>
+        <TypeContainer>
           {IncomeTypes.map((type) => (
-            <TouchableOpacity
+            <TypeButton
               key={type}
-              style={[styles.typeButton, incomeData.type === type && styles.selectedType]}
               onPress={() => setIncomeData({ ...incomeData, type })}
+              selected={incomeData.type === type}
             >
-              <Text style={styles.typeText}>{type}</Text>
-            </TouchableOpacity>
+              <TypeText selected={incomeData.type === type}>{type}</TypeText>
+            </TypeButton>
           ))}
-        </View>
+        </TypeContainer>
 
-        <Pressable style={styles.saveButton} onPress={onCreatePress}>
-          <Text style={styles.saveButtonText}>Cadastrar</Text>
-        </Pressable>
+        <ButtonWrapper>
+          <NavigationButton
+            height={40}
+            width={70}
+            buttonText="Cadastrar"
+            action={onRegisterRevenuePress}
+          />
+        </ButtonWrapper>
 
         <RegisterContainer onPress={() => navigation.navigate("IncomeList")}>
           <SubtitleGrey>Ver receitas cadastradas?</SubtitleGrey>
           <SubtitleBlue> Acesse aqui!</SubtitleBlue>
         </RegisterContainer>
-      </View>
-    </Background>
+      </Modal>
+    </Background >
   );
 }
 
@@ -143,13 +153,13 @@ const styles = StyleSheet.create({
   container: {
     height: 100,
     width: 200,
-    backgroundColor: '#F0F0F0', 
+    backgroundColor: '#F0F0F0',
     alignItems: 'center',
-    justifyContent: 'center', 
+    justifyContent: 'center',
     marginBottom: 20,
   },
   text: {
-    textAlign: 'center', 
+    textAlign: 'center',
   },
   formContainer: {
     padding: 20,
