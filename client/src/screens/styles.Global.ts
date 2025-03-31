@@ -46,4 +46,5 @@ export const SubtitleBlue = styled.Text`
 export const SubtitleBlack = styled.Text`
   color: black;
   font-size: ${RFValue(15, hp(100))}px;
+  color: #1A1A1A;
 `;

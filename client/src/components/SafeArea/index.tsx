@@ -12,5 +12,6 @@ export function SafeArea({ children }: SafeAreaProps) {
 const styles = StyleSheet.create({
   SafeArea: {
     flex: 1,
+    backgroundColor:'#000',
   },
 });

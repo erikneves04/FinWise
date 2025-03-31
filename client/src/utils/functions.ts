@@ -99,5 +99,16 @@ export function formatInputCNPJ(inputCNPJ: string): string {
   }
 }
 
+export function handleValueChange(text: string): string {
+  let numericText = text.replace(/[^0-9]/g, "");
+  let decimalPart = numericText.slice(-2);
+  let integerPart = numericText.slice(0, -2).replace(/^0+/, "");
+  if (integerPart === "") integerPart = "0";
+  integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (!decimalPart) decimalPart = "00";
+  const formattedValue = `${integerPart},${decimalPart}`;
+  return formattedValue;
+}
+
 
 
