@@ -1,4 +1,10 @@
 {
+  "devDependencies": {
+    "prisma": "^6.5.0"
+  },
+  "dependencies": {
+    "@nestjs/config": "^4.0.2",
+    "@prisma/client": "^6.5.0"
   "dependencies": {
     "@expo/metro-runtime": "^4.0.1",
     "@react-navigation/native": "^7.0.19",
@@ -11,5 +17,6 @@
     "react-native-screens": "^4.10.0",
     "react-native-web": "^0.19.13",
     "typescript": "^5.3.3"
+
   }
 }
