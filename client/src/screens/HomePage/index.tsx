@@ -7,11 +7,12 @@ import { RootStackParamList } from '../../../App';
 
 import { Background } from '../../components/Background';
 
-import { NavigationButton} from '../../components/NavigationButton';
+import { NavigationButton } from '../../components/NavigationButton';
 import { inputMasks } from "../../utils/inputMasks";
 import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
 import { TextField } from '../../components/TextField';
 import { ButtonWrapper, RegisterContainer, TextFieldWrapper, TitleWrapper } from './styles';
+import { Modal } from '../../components/Modal';
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -21,7 +22,7 @@ type Props = {
   navigation: ScreenNavigationProp;
 };
 
-export default function HomePage({navigation} : Props) {
+export default function HomePage({ navigation }: Props) {
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -42,7 +43,7 @@ export default function HomePage({navigation} : Props) {
     try {
       navigation.navigate("IncomeList");
     } catch (err: any) {
-     
+
     }
   };
 
@@ -50,17 +51,26 @@ export default function HomePage({navigation} : Props) {
     try {
       navigation.navigate("RegisterIncome");
     } catch (err: any) {
-     
+
+    }
+  };
+
+  const onMyDataPress = async () => {
+    try {
+      navigation.navigate("MyData");
+    } catch (err: any) {
+
     }
   };
 
   return (
     <Background>
-      <TitleWrapper>
+      <Modal height='70'>
+        <TitleWrapper>
           <Title>Cadastro de usuário</Title>
         </TitleWrapper>
 
-      <ButtonWrapper>
+        <ButtonWrapper>
           <NavigationButton
             height={40}
             width={70}
@@ -72,10 +82,19 @@ export default function HomePage({navigation} : Props) {
           <NavigationButton
             height={40}
             width={70}
+            buttonText="Meus Dados"
+            action={onMyDataPress}
+          />
+        </ButtonWrapper>
+        <ButtonWrapper>
+          <NavigationButton
+            height={40}
+            width={70}
             buttonText="Receitas"
             action={onRevenuePress}
           />
         </ButtonWrapper>
+      </Modal>
     </Background>
   );
 }
@@ -84,13 +103,13 @@ const styles = StyleSheet.create({
   container: {
     height: 100,
     width: 200,
-    backgroundColor: '#F0F0F0', 
+    backgroundColor: '#F0F0F0',
     alignItems: 'center',
-    justifyContent: 'center', 
+    justifyContent: 'center',
     marginBottom: 20,
   },
   text: {
-    textAlign: 'center', 
+    textAlign: 'center',
   },
 });
 
