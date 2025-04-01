@@ -72,6 +72,15 @@ export default function HomePage({ navigation }: Props) {
     }
   };
 
+  const onEditDataPress = async () => {
+    try {
+      console.log("entra")
+      navigation.navigate("EditData");
+    } catch (err: any) {
+
+    }
+  };
+
   return (
     <Background>
       <Modal height='70'>
@@ -85,14 +94,6 @@ export default function HomePage({ navigation }: Props) {
             width={70}
             buttonText="Cadastrar Receitas"
             action={onCreateRevenuePress}
-          />
-        </ButtonWrapper>
-        <ButtonWrapper>
-          <NavigationButton
-            height={40}
-            width={70}
-            buttonText="Meus Dados"
-            action={onMyDataPress}
           />
         </ButtonWrapper>
         <ButtonWrapper>
@@ -120,6 +121,24 @@ export default function HomePage({ navigation }: Props) {
             width={70}
             buttonText="Despesas"
             action={onCreateRevenuePress}
+          />
+        </ButtonWrapper>
+
+        <ButtonWrapper>
+          <NavigationButton
+            height={40}
+            width={70}
+            buttonText="Meus Dados"
+            action={onMyDataPress}
+          />
+        </ButtonWrapper>
+
+        <ButtonWrapper>
+          <NavigationButton
+            height={40}
+            width={70}
+            buttonText="Editar Dados"
+            action={onEditDataPress}
           />
         </ButtonWrapper>
       </Modal>
