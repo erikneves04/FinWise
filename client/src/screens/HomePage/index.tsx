@@ -63,6 +63,15 @@ export default function HomePage({ navigation }: Props) {
     }
   };
 
+  const onCreateExpensePress = async () => {
+    try {
+      console.log("entra")
+      navigation.navigate("RegisterExpense");
+    } catch (err: any) {
+
+    }
+  };
+
   return (
     <Background>
       <Modal height='70'>
@@ -92,6 +101,25 @@ export default function HomePage({ navigation }: Props) {
             width={70}
             buttonText="Receitas"
             action={onRevenuePress}
+          />
+        </ButtonWrapper>
+
+        <ButtonWrapper>
+          <NavigationButton
+            height={40}
+            width={70}
+            buttonText="Cadastrar Despesas"
+            action={onCreateExpensePress}
+          />
+        </ButtonWrapper>
+
+
+        <ButtonWrapper>
+          <NavigationButton
+            height={40}
+            width={70}
+            buttonText="Despesas"
+            action={onCreateRevenuePress}
           />
         </ButtonWrapper>
       </Modal>
