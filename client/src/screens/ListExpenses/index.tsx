@@ -26,13 +26,13 @@ const incomesMock = [
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
-  "IncomeList"
+  "ExpenseList"
 >;
 type Props = {
   navigation: ScreenNavigationProp;
 };
 
-export default function IncomeList({ navigation }: Props) {
+export default function ExpenseList({ navigation }: Props) {
   const [incomes, setIncomes] = useState(incomesMock);
   const [viewMode, setViewMode] = useState("table");
 
@@ -41,8 +41,8 @@ export default function IncomeList({ navigation }: Props) {
       <BackgroundWrapper>
         <TitleWrapper>
           <HeaderView>
-            <BagOfMoney height={50} width={40}/>
-            <Title>Receitas</Title>
+            <BagOfMoney height={50} width={40} expense />
+            <Title>Despesas</Title>
           </HeaderView>
         </TitleWrapper>
       </BackgroundWrapper>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: "row",
     // backgroundColor: "#007bff",
-    backgroundColor: "#3FC44E",
+    backgroundColor: "#DE1919",
     paddingVertical: 10,
     paddingHorizontal: 5,
     borderRadius: 5,
