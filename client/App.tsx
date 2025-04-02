@@ -16,6 +16,7 @@ import Login from "./src/screens/Login";
 import MyData from "./src/screens/MyData";
 import RegisterExpense from "./src/screens/CreateExpenses";
 import ExpenseList from "./src/screens/ListExpenses";
+import EditData from "./src/screens/EditData";
 
 
 export type RootStackParamList = {
@@ -69,6 +70,7 @@ export default function Routes() {
           <Screen name="HomePage" component={HomePage} />
           <Screen name="RegisterIncome" component={RegisterIncome} />
           <Screen name="IncomeList" component={IncomeList} />
+          <Screen name="EditData" component={EditData} />
         </Navigator>
       </SafeArea>
     </NavigationContainer>
