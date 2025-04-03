@@ -1,10 +1,35 @@
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, TouchableOpacity } from "react-native";
 
-interface SafeAreaProps {
-  children: React.ReactNode;
-}
+import { useNavigation } from "@react-navigation/native";
 
-export function TableRow({ children }: SafeAreaProps) {
-  return <TableRow>{children}</TableRow>
+import { widthPercentageToDP } from "react-native-responsive-screen";
+
+import Icon from "react-native-vector-icons/FontAwesome";
+
+import {
+  BackgroundWrapper,
+  CentralView,
+  FieldWork,
+  CreatReport,
+  Cell,
+} from "./styles";
+
+type Props = {
+  name: string;
+  value: string;
+  date: string;
+  type:string;
+};
+
+export function TableRow({ name, value, date, type}: Props) {
+  return (
+    <BackgroundWrapper>
+      <CentralView>
+          <Cell>{name}</Cell>
+          <Cell>R$ {value}</Cell>
+          <Cell>{date}</Cell>
+          <Cell >{type}</Cell>
+      </CentralView>
+    </BackgroundWrapper>
+  );
 }
