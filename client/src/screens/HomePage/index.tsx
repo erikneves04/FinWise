@@ -13,6 +13,8 @@ import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
 import { TextField } from '../../components/TextField';
 import { ButtonWrapper, RegisterContainer, TextFieldWrapper, TitleWrapper } from './styles';
 import { Modal } from '../../components/Modal';
+import Header from '../../components/Header';
+import { NavBar } from '../../components/NavBar';
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -39,38 +41,7 @@ export default function HomePage({ navigation }: Props) {
     setData((prevData) => ({ ...prevData, ...newData }));
   }
 
-  const onRevenuePress = async () => {
-    try {
-      navigation.navigate("IncomeList");
-    } catch (err: any) {
-
-    }
-  };
-
-  const onCreateRevenuePress = async () => {
-    try {
-      navigation.navigate("RegisterIncome");
-    } catch (err: any) {
-
-    }
-  };
-
-  const onMyDataPress = async () => {
-    try {
-      navigation.navigate("MyData");
-    } catch (err: any) {
-
-    }
-  };
-
-  const onCreateExpensePress = async () => {
-    try {
-      console.log("entra")
-      navigation.navigate("RegisterExpense");
-    } catch (err: any) {
-
-    }
-  };
+  
 
   const onEditDataPress = async () => {
     try {
@@ -83,65 +54,9 @@ export default function HomePage({ navigation }: Props) {
 
   return (
     <Background>
-      <Modal height='70'>
-        <TitleWrapper>
-          <Title>Cadastro de usuário</Title>
-        </TitleWrapper>
-
-        <ButtonWrapper>
-          <NavigationButton
-            height={40}
-            width={70}
-            buttonText="Cadastrar Receitas"
-            action={onCreateRevenuePress}
-          />
-        </ButtonWrapper>
-        <ButtonWrapper>
-          <NavigationButton
-            height={40}
-            width={70}
-            buttonText="Receitas"
-            action={onRevenuePress}
-          />
-        </ButtonWrapper>
-
-        <ButtonWrapper>
-          <NavigationButton
-            height={40}
-            width={70}
-            buttonText="Cadastrar Despesas"
-            action={onCreateExpensePress}
-          />
-        </ButtonWrapper>
-
-
-        <ButtonWrapper>
-          <NavigationButton
-            height={40}
-            width={70}
-            buttonText="Despesas"
-            action={onCreateRevenuePress}
-          />
-        </ButtonWrapper>
-
-        <ButtonWrapper>
-          <NavigationButton
-            height={40}
-            width={70}
-            buttonText="Meus Dados"
-            action={onMyDataPress}
-          />
-        </ButtonWrapper>
-
-        <ButtonWrapper>
-          <NavigationButton
-            height={40}
-            width={70}
-            buttonText="Editar Dados"
-            action={onEditDataPress}
-          />
-        </ButtonWrapper>
-      </Modal>
+      <Header />
+      
+      <NavBar />
     </Background>
   );
 }

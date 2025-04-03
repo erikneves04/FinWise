@@ -18,7 +18,6 @@ export const ButtonWrapper = styled.View`
 export const TitleWrapper = styled.View`
   margin-top: ${hp(0.5)};
   margin-bottom: ${hp(3)};
-  align-items: center;
 `;
 
 export const SubtitleWrapper = styled.View`
@@ -29,5 +28,6 @@ export const SubtitleWrapper = styled.View`
 
 export const RegisterContainer = styled.TouchableOpacity`
   margin-top: ${hp(1)}px;
-  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 `;
