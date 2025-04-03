@@ -1,18 +1,37 @@
 import styled from "styled-components/native";
-import { RFValue } from "react-native-responsive-fontsize";
-import { getStatusBarHeight } from "react-native-status-bar-height";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
+export const WhiteBackground = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  width: ${wp(90)}px;
+`;
+
+export const BackgroundWrapper = styled.View`
+  width: ${wp(100)}px;
+  height: ${hp(16)}px;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+  elevation: 24;
+`;
+
+export const WhiteCard = styled.TouchableOpacity`
+  width: ${hp(13)}px;
+  height: ${hp(13)}px;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+  elevation: 5;
+  padding: ${hp(1)}px;
+`;
+
 export const TextFieldWrapper = styled.View`
   margin-top: ${hp(0.2)}px;
   margin-bottom: ${hp(0.2)}px;
-`;
-
-export const ButtonWrapper = styled.View`
-  margin-top: ${hp(2)}px;
 `;
 
 export const TitleWrapper = styled.View`
