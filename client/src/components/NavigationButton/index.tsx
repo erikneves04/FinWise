@@ -17,6 +17,7 @@ export interface NavigationButtonProps {
   white?: boolean;
   fontColor?: string; 
   fontSize?: number;
+  type?: "expense" | "revenue";
 }
 
 export function NavigationButton({
@@ -26,11 +27,18 @@ export function NavigationButton({
   height = 50,
   white,
   fontSize = RFValue(14),
+  type, 
 }: NavigationButtonProps) {
-  const backgroundColor = white ? "#FFF" : "rgb(43, 154, 200)";
+  const backgroundColor = type === "expense" 
+    ? "#DE1919" 
+    : type === "revenue" 
+    ? "#3FC44E" 
+    : white 
+    ? "#FFF" 
+    : "rgb(43, 154, 200)";
+
   const borderColor = white ? "rgb(43, 154, 200)" : "transparent";
   const fontColor = white ? "rgb(43, 154, 200)" : "#FFF";
-
 
   const styles = StyleSheet.create({
     button: {
@@ -52,7 +60,7 @@ export function NavigationButton({
   });
 
   return (
-    <TouchableOpacity style={styles.button} onPress={() => action()}>
+    <TouchableOpacity style={styles.button} onPress={action}>
       <ButtonText style={styles.buttonText}>{buttonText}</ButtonText>
     </TouchableOpacity>
   );
