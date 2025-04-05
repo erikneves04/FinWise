@@ -4,5 +4,6 @@ export class CreateUsuarioDto {
     celular: string;
     senha: string;
     dataNascimento: Date;
+    saldo: 0.0;
   }
   

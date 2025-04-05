@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseFloatPipe } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 
 @Controller('usuario')
 export class UsuarioController {
-  constructor(private readonly usuarioService: UsuarioService) {}
+  constructor(private readonly usuarioService: UsuarioService) { }
 
   @Post()
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
@@ -31,4 +31,22 @@ export class UsuarioController {
   remove(@Param('id') id: string) {
     return this.usuarioService.remove(+id);
   }
+
+  @Post(':id/saldo/adicionar')
+  adicionarSaldo(
+    @Param('id') id: string,
+    @Body('valor', ParseFloatPipe) valor: number,
+  ) {
+    return this.usuarioService.adicionarSaldo(+id, valor);
+  }
+
+  @Post(':id/saldo/remover')
+  removerSaldo(
+    @Param('id') id: string,
+    @Body('valor', ParseFloatPipe) valor: number,
+  ) {
+    return this.usuarioService.removerSaldo(+id, valor);
+  }
+
 }
+

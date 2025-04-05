@@ -36,6 +36,12 @@ let UsuarioController = class UsuarioController {
     remove(id) {
         return this.usuarioService.remove(+id);
     }
+    adicionarSaldo(id, valor) {
+        return this.usuarioService.adicionarSaldo(+id, valor);
+    }
+    removerSaldo(id, valor) {
+        return this.usuarioService.removerSaldo(+id, valor);
+    }
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
@@ -73,6 +79,22 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], UsuarioController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)(':id/saldo/adicionar'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('valor', common_1.ParseFloatPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:returntype", void 0)
+], UsuarioController.prototype, "adicionarSaldo", null);
+__decorate([
+    (0, common_1.Post)(':id/saldo/remover'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('valor', common_1.ParseFloatPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:returntype", void 0)
+], UsuarioController.prototype, "removerSaldo", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuario'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])

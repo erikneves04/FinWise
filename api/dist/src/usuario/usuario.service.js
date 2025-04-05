@@ -40,6 +40,27 @@ let UsuarioService = class UsuarioService {
             where: { id },
         });
     }
+    async adicionarSaldo(id, valor) {
+        const usuario = await this.findOne(id);
+        return this.prisma.user.update({
+            where: { id },
+            data: {
+                saldo: usuario.saldo + valor,
+            },
+        });
+    }
+    async removerSaldo(id, valor) {
+        const usuario = await this.findOne(id);
+        if (usuario.saldo < valor) {
+            throw new Error('Saldo insuficiente');
+        }
+        return this.prisma.user.update({
+            where: { id },
+            data: {
+                saldo: usuario.saldo - valor,
+            },
+        });
+    }
 };
 exports.UsuarioService = UsuarioService;
 exports.UsuarioService = UsuarioService = __decorate([
