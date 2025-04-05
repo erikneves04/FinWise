@@ -17,7 +17,8 @@ model User {
   id             Int      @id @default(autoincrement())
   nome           String
   email          String   @unique
-  celular        String   
-  senha          String 
-  dataNascimento DateTime 
+  celular        String
+  senha          String
+  dataNascimento DateTime
+  saldo          Float    @default(0.0)
 }
