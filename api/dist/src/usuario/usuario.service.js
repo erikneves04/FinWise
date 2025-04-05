@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
+const common_2 = require("@nestjs/common");
 let UsuarioService = class UsuarioService {
     constructor(prisma) {
         this.prisma = prisma;
@@ -52,7 +53,7 @@ let UsuarioService = class UsuarioService {
     async removerSaldo(id, valor) {
         const usuario = await this.findOne(id);
         if (usuario.saldo < valor) {
-            throw new Error('Saldo insuficiente');
+            throw new common_2.BadRequestException('Saldo insuficiente');
         }
         return this.prisma.user.update({
             where: { id },
