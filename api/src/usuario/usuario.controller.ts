@@ -48,5 +48,10 @@ export class UsuarioController {
     return this.usuarioService.removerSaldo(+id, valor);
   }
 
+  @Get(':id/saldo')
+  getSaldo(@Param('id') id: string) {
+    return this.usuarioService.getSaldo(+id);
+  }
+
 }
 

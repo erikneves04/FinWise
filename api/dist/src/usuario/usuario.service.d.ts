@@ -5,66 +5,69 @@ export declare class UsuarioService {
     private prisma;
     constructor(prisma: PrismaService);
     create(createUsuarioDto: CreateUsuarioDto): import(".prisma/client").Prisma.Prisma__UserClient<{
+        id: number;
         nome: string;
         email: string;
         celular: string;
         senha: string;
         dataNascimento: Date;
         saldo: number;
-        id: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+        id: number;
         nome: string;
         email: string;
         celular: string;
         senha: string;
         dataNascimento: Date;
         saldo: number;
-        id: number;
     }[]>;
     findOne(id: number): import(".prisma/client").Prisma.Prisma__UserClient<{
+        id: number;
         nome: string;
         email: string;
         celular: string;
         senha: string;
         dataNascimento: Date;
         saldo: number;
-        id: number;
     }, null, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     update(id: number, updateUsuarioDto: UpdateUsuarioDto): import(".prisma/client").Prisma.Prisma__UserClient<{
+        id: number;
         nome: string;
         email: string;
         celular: string;
         senha: string;
         dataNascimento: Date;
         saldo: number;
-        id: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     remove(id: number): import(".prisma/client").Prisma.Prisma__UserClient<{
+        id: number;
         nome: string;
         email: string;
         celular: string;
         senha: string;
         dataNascimento: Date;
         saldo: number;
-        id: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     adicionarSaldo(id: number, valor: number): Promise<{
+        id: number;
         nome: string;
         email: string;
         celular: string;
         senha: string;
         dataNascimento: Date;
         saldo: number;
-        id: number;
     }>;
     removerSaldo(id: number, valor: number): Promise<{
+        id: number;
         nome: string;
         email: string;
         celular: string;
         senha: string;
         dataNascimento: Date;
         saldo: number;
-        id: number;
+    }>;
+    getSaldo(id: number): Promise<{
+        saldo: number;
     }>;
 }

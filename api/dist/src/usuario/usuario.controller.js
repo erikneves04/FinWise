@@ -42,6 +42,9 @@ let UsuarioController = class UsuarioController {
     removerSaldo(id, valor) {
         return this.usuarioService.removerSaldo(+id, valor);
     }
+    getSaldo(id) {
+        return this.usuarioService.getSaldo(+id);
+    }
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
@@ -95,6 +98,13 @@ __decorate([
     __metadata("design:paramtypes", [String, Number]),
     __metadata("design:returntype", void 0)
 ], UsuarioController.prototype, "removerSaldo", null);
+__decorate([
+    (0, common_1.Get)(':id/saldo'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], UsuarioController.prototype, "getSaldo", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuario'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])

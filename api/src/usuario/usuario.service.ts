@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 @Injectable()
 export class UsuarioService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   create(createUsuarioDto: CreateUsuarioDto) {
     return this.prisma.user.create({
@@ -58,5 +58,12 @@ export class UsuarioService {
       },
     });
   }
-  
+  async getSaldo(id: number) {
+    const usuario = await this.findOne(id);
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+    return { saldo: usuario.saldo };
+  }
+
 }

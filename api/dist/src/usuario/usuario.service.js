@@ -62,6 +62,13 @@ let UsuarioService = class UsuarioService {
             },
         });
     }
+    async getSaldo(id) {
+        const usuario = await this.findOne(id);
+        if (!usuario) {
+            throw new common_2.NotFoundException('Usuário não encontrado');
+        }
+        return { saldo: usuario.saldo };
+    }
 };
 exports.UsuarioService = UsuarioService;
 exports.UsuarioService = UsuarioService = __decorate([
