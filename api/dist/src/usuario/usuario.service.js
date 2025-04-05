@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
-const common_2 = require("@nestjs/common");
 let UsuarioService = class UsuarioService {
     constructor(prisma) {
         this.prisma = prisma;
@@ -25,18 +24,24 @@ let UsuarioService = class UsuarioService {
     findAll() {
         return this.prisma.user.findMany();
     }
-    findOne(id) {
-        return this.prisma.user.findUnique({
+    async findOne(id) {
+        const usuario = await this.prisma.user.findUnique({
             where: { id },
         });
+        if (!usuario) {
+            throw new common_1.NotFoundException('Usuário não encontrado');
+        }
+        return usuario;
     }
-    update(id, updateUsuarioDto) {
+    async update(id, updateUsuarioDto) {
+        await this.findOne(id);
         return this.prisma.user.update({
             where: { id },
             data: updateUsuarioDto,
         });
     }
-    remove(id) {
+    async remove(id) {
+        await this.findOne(id);
         return this.prisma.user.delete({
             where: { id },
         });
@@ -53,7 +58,7 @@ let UsuarioService = class UsuarioService {
     async removerSaldo(id, valor) {
         const usuario = await this.findOne(id);
         if (usuario.saldo < valor) {
-            throw new common_2.BadRequestException('Saldo insuficiente');
+            throw new common_1.BadRequestException('Saldo insuficiente');
         }
         return this.prisma.user.update({
             where: { id },
@@ -64,9 +69,6 @@ let UsuarioService = class UsuarioService {
     }
     async getSaldo(id) {
         const usuario = await this.findOne(id);
-        if (!usuario) {
-            throw new common_2.NotFoundException('Usuário não encontrado');
-        }
         return { saldo: usuario.saldo };
     }
 };

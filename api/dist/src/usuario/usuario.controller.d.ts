@@ -22,7 +22,7 @@ export declare class UsuarioController {
         dataNascimento: Date;
         saldo: number;
     }[]>;
-    findOne(id: string): import(".prisma/client").Prisma.Prisma__UserClient<{
+    findOne(id: string): Promise<{
         id: number;
         nome: string;
         email: string;
@@ -30,8 +30,8 @@ export declare class UsuarioController {
         senha: string;
         dataNascimento: Date;
         saldo: number;
-    }, null, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
-    update(id: string, updateUsuarioDto: UpdateUsuarioDto): import(".prisma/client").Prisma.Prisma__UserClient<{
+    }>;
+    update(id: string, updateUsuarioDto: UpdateUsuarioDto): Promise<{
         id: number;
         nome: string;
         email: string;
@@ -39,8 +39,8 @@ export declare class UsuarioController {
         senha: string;
         dataNascimento: Date;
         saldo: number;
-    }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
-    remove(id: string): import(".prisma/client").Prisma.Prisma__UserClient<{
+    }>;
+    remove(id: string): Promise<{
         id: number;
         nome: string;
         email: string;
@@ -48,7 +48,7 @@ export declare class UsuarioController {
         senha: string;
         dataNascimento: Date;
         saldo: number;
-    }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
+    }>;
     adicionarSaldo(id: string, valor: number): Promise<{
         id: number;
         nome: string;

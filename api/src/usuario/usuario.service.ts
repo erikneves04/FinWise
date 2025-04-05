@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+
 @Injectable()
 export class UsuarioService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   create(createUsuarioDto: CreateUsuarioDto) {
     return this.prisma.user.create({
@@ -17,20 +17,28 @@ export class UsuarioService {
     return this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
-    return this.prisma.user.findUnique({
+  async findOne(id: number) {
+    const usuario = await this.prisma.user.findUnique({
       where: { id },
     });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    return usuario;
   }
 
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+  async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+    await this.findOne(id); // garante que o usuário existe
     return this.prisma.user.update({
       where: { id },
       data: updateUsuarioDto,
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    await this.findOne(id); // garante que o usuário existe
     return this.prisma.user.delete({
       where: { id },
     });
@@ -58,12 +66,9 @@ export class UsuarioService {
       },
     });
   }
+
   async getSaldo(id: number) {
     const usuario = await this.findOne(id);
-    if (!usuario) {
-      throw new NotFoundException('Usuário não encontrado');
-    }
     return { saldo: usuario.saldo };
   }
-
 }
