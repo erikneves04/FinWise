@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-
+import { BadRequestException } from '@nestjs/common';
 @Injectable()
 export class UsuarioService {
   constructor(private prisma: PrismaService) {}
@@ -49,7 +49,7 @@ export class UsuarioService {
   async removerSaldo(id: number, valor: number) {
     const usuario = await this.findOne(id);
     if (usuario.saldo < valor) {
-      throw new Error('Saldo insuficiente');
+      throw new BadRequestException('Saldo insuficiente');
     }
     return this.prisma.user.update({
       where: { id },
