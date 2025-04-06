@@ -25,14 +25,15 @@ import { TableRow } from "../../components/TableRow";
 import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { ExpenseTypes } from '../../utils/types';
 
 const screenWidth = Dimensions.get("window").width;
 
 // Dados de exemplo
 const expensesMock = [
-  { id: "1", name: "Mercado", value: "1.500,00", date: "01/03/2025", type: "Alimentação" },
-  { id: "2", name: "Gasolina", value: "750,00", date: "05/03/2025", type: "Transporte" },
-  { id: "3", name: "Financiamento do carro", value: "1.200,00", date: "10/03/2025", type: "Outros" },
+  { id: "1", name: "Mercado", value: "1.500,00", date: "01/03/2025", type: ExpenseTypes[0] },
+  { id: "2", name: "Gasolina", value: "750,00", date: "05/03/2025", type: ExpenseTypes[2] },
+  { id: "3", name: "Financiamento do carro", value: "1.200,00", date: "10/03/2025", type: ExpenseTypes[4] },
 ];
 
 type ScreenNavigationProp = NativeStackNavigationProp<

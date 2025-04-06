@@ -24,9 +24,9 @@ import { Modal } from '../../components/Modal';
 import { TextField } from '../../components/TextField';
 import { formatInputDate, handleValueChange } from '../../utils/functions';
 import { NavigationButton } from '../../components/NavigationButton';
+import { RevenueTypes } from '../../utils/types';
 
 const screenWidth = Dimensions.get("window").width;
-const IncomeTypes = ['Salário', 'Freelancer', 'Fixo', 'Bônus', 'Outros'];
 
 type ScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, "RegisterIncome">;
 type ScreenRouteProp = RouteProp<RootStackParamList, "RegisterIncome">;
@@ -134,7 +134,7 @@ export default function RegisterIncome({ navigation, route }: Props) {
 
         <TypeLabel>Tipo:</TypeLabel>
         <TypeContainer>
-          {IncomeTypes.map((type) => (
+          {RevenueTypes.map((type) => (
             <TypeButton
               key={type}
               onPress={() => updateIncomeData({ type })}

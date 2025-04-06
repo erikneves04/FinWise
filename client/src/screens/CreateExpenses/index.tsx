@@ -25,9 +25,9 @@ import { Modal } from '../../components/Modal';
 import { TextField } from '../../components/TextField';
 import { formatInputDate, handleValueChange } from '../../utils/functions';
 import { NavigationButton } from '../../components/NavigationButton';
+import { ExpenseTypes } from '../../utils/types';
 
 const screenWidth = Dimensions.get("window").width;
-const ExpenseTypes = ['Alimentação', 'Fixo', 'Transporte', 'Lazer', 'Outros'];
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,

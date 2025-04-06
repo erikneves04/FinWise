@@ -23,6 +23,7 @@ import {
 } from "./styles";
 import BagOfMoney from "../../assets/svg/bagOfMoney";
 import { TableRow } from "../../components/TableRow";
+import { RevenueTypes } from "../../utils/types";
 
 import {
   widthPercentageToDP as wp,
@@ -33,9 +34,9 @@ const screenWidth = Dimensions.get("window").width;
 
 // Dados de exemplo
 const incomesMock = [
-  { id: "1", name: "Salário", value: "3.500,00", date: "01/03/2025", type: "Fixo" },
-  { id: "2", name: "Freelance", value: "500,00", date: "05/03/2025", type: "Bônus" },
-  { id: "3", name: "Investimentos", value: "1.200,00", date: "10/03/2025", type: "Outros" },
+  { id: "1", name: "Salário", value: "3.500,00", date: "01/03/2025", type: RevenueTypes[0] },
+  { id: "2", name: "Freelance", value: "500,00", date: "05/03/2025", type: RevenueTypes[3] },
+  { id: "3", name: "Investimentos", value: "1.200,00", date: "10/03/2025", type: RevenueTypes[4] },
 ];
 
 type ScreenNavigationProp = NativeStackNavigationProp<
