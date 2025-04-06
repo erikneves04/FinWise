@@ -30,9 +30,9 @@ const screenWidth = Dimensions.get("window").width;
 
 // Dados de exemplo
 const expensesMock = [
-  { id: "1", name: "Salário", value: "3.500,00", date: "01/03/2025", type: "Fixo" },
-  { id: "2", name: "Freelance", value: "500,00", date: "05/03/2025", type: "Bônus" },
-  { id: "3", name: "Investimentos", value: "1.200,00", date: "10/03/2025", type: "Outros" },
+  { id: "1", name: "Mercado", value: "1.500,00", date: "01/03/2025", type: "Alimentação" },
+  { id: "2", name: "Gasolina", value: "750,00", date: "05/03/2025", type: "Transporte" },
+  { id: "3", name: "Financiamento do carro", value: "1.200,00", date: "10/03/2025", type: "Outros" },
 ];
 
 type ScreenNavigationProp = NativeStackNavigationProp<
