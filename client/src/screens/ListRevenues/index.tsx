@@ -145,11 +145,10 @@ export default function IncomeList({ navigation }: Props) {
             <Text style={styles.modalTitle}>Confirmar Exclusão</Text>
             {selectedIncome && (
               <>
-                <Text>Você deseja excluir a receita abaixo?</Text>
-                <Text><Text style={styles.bold}>Nome:</Text> {selectedIncome.name}</Text>
-                <Text><Text style={styles.bold}>Valor:</Text> R$ {selectedIncome.value}</Text>
-                <Text><Text style={styles.bold}>Data:</Text> {selectedIncome.date}</Text>
-                <Text><Text style={styles.bold}>Tipo:</Text> {selectedIncome.type}</Text>
+                <Text><Text style={styles.bold}>    Nome:</Text> {selectedIncome.name}</Text>
+                <Text><Text style={styles.bold}>💰 Valor:</Text> R$ {selectedIncome.value}</Text>
+                <Text><Text style={styles.bold}>📅 Data:</Text> {selectedIncome.date}</Text>
+                <Text><Text style={styles.bold}>🔖 Tipo:</Text> {selectedIncome.type}</Text>
               </>
             )}
             <View style={styles.modalButtons}>
@@ -256,12 +255,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
-    alignItems: "center",
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    alignItems: "center",
+    textAlign: "center"
   },
   modalButtons: {
     flexDirection: "row",
