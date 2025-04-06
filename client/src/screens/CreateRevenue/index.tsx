@@ -1,67 +1,94 @@
-import { StyleSheet, Text, View, TextInput, Platform, Pressable, Dimensions, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { useState, useEffect } from 'react';
 import { Background } from '../../components/Background';
-import { ButtonWrapper, HeaderView, RegisterContainer, RegisterRevenueButton, RegisterRevenueText, TextFieldWrapper, Title, TitleWrapper, TypeButton, TypeContainer, TypeLabel, TypeText } from "./styles";
+import {
+  ButtonWrapper,
+  HeaderView,
+  RegisterContainer,
+  Title,
+  TitleWrapper,
+  TypeButton,
+  TypeContainer,
+  TypeLabel,
+  TypeText,
+} from "./styles";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../App';
 
 import { SubtitleBlue, SubtitleGrey } from '../styles.Global';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
-import LogoItem from '../../assets/svg/logo';
 import BagOfMoney from '../../assets/svg/bagOfMoney';
 import { Modal } from '../../components/Modal';
 import { TextField } from '../../components/TextField';
 import { formatInputDate, handleValueChange } from '../../utils/functions';
 import { NavigationButton } from '../../components/NavigationButton';
+import { RevenueTypes } from '../../utils/types';
 
 const screenWidth = Dimensions.get("window").width;
-const IncomeTypes = ['Salário', 'Freelancer', 'Fixo', 'Bônus', 'Outros']
 
-type ScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "RegisterIncome"
->;
+type ScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, "RegisterIncome">;
+type ScreenRouteProp = RouteProp<RootStackParamList, "RegisterIncome">;
+
 type Props = {
   navigation: ScreenNavigationProp;
+  route: ScreenRouteProp;
 };
 
-export default function RegisterIncome({ navigation }: Props) {
+export default function RegisterIncome({ navigation, route }: Props) {
+  const isEditMode = route.params?.income !== undefined;
   const [incomeData, setIncomeData] = useState({
-    name: "",
-    value: "",
-    date: "",
-    type: "",
+    id: '',
+    name: '',
+    value: '',
+    date: '',
+    type: '',
   });
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  useEffect(() => {
+    if (isEditMode) {
+      const { income } = route.params;
+  
+      // converter de "DD/MM/YYYY" para "YYYY-MM-DD" (ou só unmasked)
+      const [day, month, year] = income.date.split("/");
+      const unmaskedDate = `${year}-${month}-${day}`;
+  
+      setIncomeData({
+        ...income,
+        date: unmaskedDate, // o componente espera isso
+      });
+    }
+  }, []);
+  
+  const formatDate = (date: any) => {
+    return moment(date).format("DD/MM/YYYY");
+  };
 
-  const onCreatePress = async () => {
+  const updateIncomeData = (newData: any) => {
+    setIncomeData({ ...incomeData, ...newData });
+  };
+
+  const onSubmit = () => {
     if (!incomeData.name || !incomeData.value || !incomeData.date || !incomeData.type) {
       alert("Preencha todos os campos corretamente!");
       return;
     }
 
-    if (incomeData.value == "0,00") {
+    if (incomeData.value === "0,00") {
       alert("É necessário informar o valor da receita!");
       return;
     }
 
-    // TODO: Lógica de cadastro
-    alert("BOTÃO DE CADASTRO ACIONADO MAS AINDA NÃO IMPLEMENTADO!");
-  };
+    if (isEditMode) {
+      // TODO: Lógica para editar
+      alert("Botão de edição pressionado, mas a rota ainda não foi implementada!");
+    } else {
+      // TODO: Lógica para cadastrar
+      alert("Botão de cadastro pressionado, mas a rota ainda não foi implementada!");
+    }
 
-  const formatDate = (date: any) => {
-    return moment(date).format("DD/MM/YYYY");
-  };
-
-  const onRegisterRevenuePress = async () => {
-    navigation.navigate("IncomeList")
-  }
-
-  const updateIncomeData = (newData: any) => {
-    setIncomeData({ ...incomeData, ...newData });
+    navigation.navigate("IncomeList");
   };
 
   return (
@@ -70,60 +97,47 @@ export default function RegisterIncome({ navigation }: Props) {
         <TitleWrapper>
           <HeaderView>
             <BagOfMoney height={50} width={40} />
-            <Title>Criar receita</Title>
+            <Title>{isEditMode ? "Editar receita" : "Criar receita"}</Title>
           </HeaderView>
         </TitleWrapper>
 
-        <TextFieldWrapper>
-          <TextField
-            required
-            label="Receita"
-            placeholder="Digite aqui o nome da receita"
-            autoCapitalize="words"
-            onChange={(text) => setIncomeData({ ...incomeData, name: text })}
-            value={incomeData.name}
-          />
-        </TextFieldWrapper>
+        <TextField
+          required
+          label="Receita"
+          placeholder="Digite aqui o nome da receita"
+          autoCapitalize="words"
+          onChange={(text) => updateIncomeData({ name: text })}
+          value={incomeData.name}
+        />
 
-        <TextFieldWrapper>
-          <TextField
-            required
-            label="Valor"
-            placeholder="Digite aqui o valor da receita"
-            autoCapitalize="words"
-            keyboardType="numeric"
-            onChange={(text: string) =>
-              setIncomeData((prevData) => ({
-                ...prevData,
-                value: handleValueChange(text),
-              }))
-            }
-            value={incomeData.value}
-          />
-        </TextFieldWrapper>
+        <TextField
+          required
+          label="Valor"
+          placeholder="Digite aqui o valor da receita"
+          keyboardType="numeric"
+          onChange={(text: string) =>
+            updateIncomeData({ value: handleValueChange(text) })
+          }
+          value={incomeData.value}
+        />
 
-        <TextFieldWrapper>
-          <TextField
-            required
-            label="Data"
-            placeholder="Selecionar data"
-            value={incomeData.date ? formatDate(incomeData.date) : ""}
-            onChange={(masked, unmasked) =>
-              setIncomeData((prevData) => ({
-                ...prevData,
-                date: unmasked,
-              }))
-            }
-            isDatePicker={true}
-          />
-        </TextFieldWrapper>
+        <TextField
+          required
+          label="Data"
+          placeholder="Selecionar data"
+          value={incomeData.date ? formatDate(incomeData.date) : ""}
+          onChange={(masked, unmasked) =>
+            updateIncomeData({ date: unmasked })
+          }
+          isDatePicker={true}
+        />
 
         <TypeLabel>Tipo:</TypeLabel>
         <TypeContainer>
-          {IncomeTypes.map((type) => (
+          {RevenueTypes.map((type) => (
             <TypeButton
               key={type}
-              onPress={() => setIncomeData({ ...incomeData, type })}
+              onPress={() => updateIncomeData({ type })}
               selected={incomeData.type === type}
             >
               <TypeText selected={incomeData.type === type}>{type}</TypeText>
@@ -135,17 +149,19 @@ export default function RegisterIncome({ navigation }: Props) {
           <NavigationButton
             height={40}
             width={70}
-            buttonText="Cadastrar"
-            action={onRegisterRevenuePress}
+            buttonText={isEditMode ? "Salvar" : "Cadastrar"}
+            action={onSubmit}
           />
         </ButtonWrapper>
 
-        <RegisterContainer onPress={() => navigation.navigate("IncomeList")}>
-          <SubtitleGrey>Ver receitas cadastradas?</SubtitleGrey>
-          <SubtitleBlue> Acesse aqui!</SubtitleBlue>
-        </RegisterContainer>
+        {!isEditMode && (
+          <RegisterContainer onPress={() => navigation.navigate("IncomeList")}>
+            <SubtitleGrey>Ver receitas cadastradas?</SubtitleGrey>
+            <SubtitleBlue> Acesse aqui!</SubtitleBlue>
+          </RegisterContainer>
+        )}
       </Modal>
-    </Background >
+    </Background>
   );
 }
 
