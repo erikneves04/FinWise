@@ -46,6 +46,54 @@ let UsuarioService = class UsuarioService {
             where: { id },
         });
     }
+    async criarDespesa(usuarioId, dto) {
+        return this.prisma.despesa.create({
+            data: {
+                ...dto,
+                usuarioId,
+            },
+        });
+    }
+    async getDespesas(usuarioId) {
+        return this.prisma.despesa.findMany({
+            where: { usuarioId },
+        });
+    }
+    async buscarDespesaPorId(usuarioId, despesaId) {
+        const despesa = await this.prisma.despesa.findFirst({
+            where: {
+                id: despesaId,
+                usuarioId,
+            },
+        });
+        if (!despesa) {
+            throw new common_1.NotFoundException('Despesa não encontrada para este usuário.');
+        }
+        return despesa;
+    }
+    async atualizarDespesa(usuarioId, despesaId, dto) {
+        const despesa = await this.prisma.despesa.findFirst({
+            where: { id: despesaId, usuarioId },
+        });
+        if (!despesa) {
+            throw new common_1.NotFoundException('Despesa não encontrada para este usuário.');
+        }
+        return this.prisma.despesa.update({
+            where: { id: despesaId },
+            data: dto,
+        });
+    }
+    async deletarDespesa(usuarioId, despesaId) {
+        const despesa = await this.prisma.despesa.findFirst({
+            where: { id: despesaId, usuarioId },
+        });
+        if (!despesa) {
+            throw new common_1.NotFoundException('Despesa não encontrada para este usuário.');
+        }
+        return this.prisma.despesa.delete({
+            where: { id: despesaId },
+        });
+    }
     async adicionarSaldo(id, valor) {
         const usuario = await this.findOne(id);
         return this.prisma.user.update({

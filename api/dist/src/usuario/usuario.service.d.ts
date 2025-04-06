@@ -1,6 +1,8 @@
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { CreateDespesaDto } from 'src/despesas/dto/create-despesa.dto';
+import { UpdateDespesaDto } from 'src/despesas/dto/update-despesa.dto';
 export declare class UsuarioService {
     private prisma;
     constructor(prisma: PrismaService);
@@ -48,6 +50,46 @@ export declare class UsuarioService {
         senha: string;
         dataNascimento: Date;
         saldo: number;
+    }>;
+    criarDespesa(usuarioId: number, dto: CreateDespesaDto): Promise<{
+        id: number;
+        data: Date;
+        descricao: string;
+        valor: number;
+        tipo: import(".prisma/client").$Enums.DespesaTipo;
+        usuarioId: number;
+    }>;
+    getDespesas(usuarioId: number): Promise<{
+        id: number;
+        data: Date;
+        descricao: string;
+        valor: number;
+        tipo: import(".prisma/client").$Enums.DespesaTipo;
+        usuarioId: number;
+    }[]>;
+    buscarDespesaPorId(usuarioId: number, despesaId: number): Promise<{
+        id: number;
+        data: Date;
+        descricao: string;
+        valor: number;
+        tipo: import(".prisma/client").$Enums.DespesaTipo;
+        usuarioId: number;
+    }>;
+    atualizarDespesa(usuarioId: number, despesaId: number, dto: UpdateDespesaDto): Promise<{
+        id: number;
+        data: Date;
+        descricao: string;
+        valor: number;
+        tipo: import(".prisma/client").$Enums.DespesaTipo;
+        usuarioId: number;
+    }>;
+    deletarDespesa(usuarioId: number, despesaId: number): Promise<{
+        id: number;
+        data: Date;
+        descricao: string;
+        valor: number;
+        tipo: import(".prisma/client").$Enums.DespesaTipo;
+        usuarioId: number;
     }>;
     adicionarSaldo(id: number, valor: number): Promise<{
         id: number;

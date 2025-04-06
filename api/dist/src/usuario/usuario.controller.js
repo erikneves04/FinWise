@@ -17,6 +17,8 @@ const common_1 = require("@nestjs/common");
 const usuario_service_1 = require("./usuario.service");
 const create_usuario_dto_1 = require("./dto/create-usuario.dto");
 const update_usuario_dto_1 = require("./dto/update-usuario.dto");
+const create_despesa_dto_1 = require("../despesas/dto/create-despesa.dto");
+const update_despesa_dto_1 = require("../despesas/dto/update-despesa.dto");
 let UsuarioController = class UsuarioController {
     constructor(usuarioService) {
         this.usuarioService = usuarioService;
@@ -29,6 +31,21 @@ let UsuarioController = class UsuarioController {
     }
     findOne(id) {
         return this.usuarioService.findOne(+id);
+    }
+    createDespesa(id, createDespesaDto) {
+        return this.usuarioService.criarDespesa(id, createDespesaDto);
+    }
+    async getDespesasDoUsuario(id) {
+        return this.usuarioService.getDespesas(id);
+    }
+    async buscarDespesaPorId(usuarioId, despesaId) {
+        return this.usuarioService.buscarDespesaPorId(usuarioId, despesaId);
+    }
+    updateDespesa(usuarioId, despesaId, updateDespesaDto) {
+        return this.usuarioService.atualizarDespesa(usuarioId, despesaId, updateDespesaDto);
+    }
+    deleteDespesa(usuarioId, despesaId) {
+        return this.usuarioService.deletarDespesa(usuarioId, despesaId);
     }
     update(id, updateUsuarioDto) {
         return this.usuarioService.update(+id, updateUsuarioDto);
@@ -64,22 +81,62 @@ __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], UsuarioController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Post)(':id/despesas'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, create_despesa_dto_1.CreateDespesaDto]),
+    __metadata("design:returntype", void 0)
+], UsuarioController.prototype, "createDespesa", null);
+__decorate([
+    (0, common_1.Get)(':id/despesas'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getDespesasDoUsuario", null);
+__decorate([
+    (0, common_1.Get)(':id/despesas/:despesaId'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('despesaId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "buscarDespesaPorId", null);
+__decorate([
+    (0, common_1.Patch)(':usuarioId/despesas/:despesaId'),
+    __param(0, (0, common_1.Param)('usuarioId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('despesaId', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, update_despesa_dto_1.UpdateDespesaDto]),
+    __metadata("design:returntype", void 0)
+], UsuarioController.prototype, "updateDespesa", null);
+__decorate([
+    (0, common_1.Delete)(':usuarioId/despesas/:despesaId'),
+    __param(0, (0, common_1.Param)('usuarioId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('despesaId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", void 0)
+], UsuarioController.prototype, "deleteDespesa", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_usuario_dto_1.UpdateUsuarioDto]),
+    __metadata("design:paramtypes", [Number, update_usuario_dto_1.UpdateUsuarioDto]),
     __metadata("design:returntype", void 0)
 ], UsuarioController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], UsuarioController.prototype, "remove", null);
 __decorate([
@@ -87,7 +144,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('valor', common_1.ParseFloatPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:paramtypes", [Number, Number]),
     __metadata("design:returntype", void 0)
 ], UsuarioController.prototype, "adicionarSaldo", null);
 __decorate([
@@ -95,14 +152,14 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('valor', common_1.ParseFloatPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:paramtypes", [Number, Number]),
     __metadata("design:returntype", void 0)
 ], UsuarioController.prototype, "removerSaldo", null);
 __decorate([
     (0, common_1.Get)(':id/saldo'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], UsuarioController.prototype, "getSaldo", null);
 exports.UsuarioController = UsuarioController = __decorate([
