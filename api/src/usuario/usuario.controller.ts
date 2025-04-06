@@ -1,0 +1,57 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseFloatPipe } from '@nestjs/common';
+import { UsuarioService } from './usuario.service';
+import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+
+@Controller('usuario')
+export class UsuarioController {
+  constructor(private readonly usuarioService: UsuarioService) { }
+
+  @Post()
+  create(@Body() createUsuarioDto: CreateUsuarioDto) {
+    return this.usuarioService.create(createUsuarioDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.usuarioService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usuarioService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuarioService.update(+id, updateUsuarioDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usuarioService.remove(+id);
+  }
+
+  @Post(':id/saldo/adicionar')
+  adicionarSaldo(
+    @Param('id') id: string,
+    @Body('valor', ParseFloatPipe) valor: number,
+  ) {
+    return this.usuarioService.adicionarSaldo(+id, valor);
+  }
+
+  @Post(':id/saldo/remover')
+  removerSaldo(
+    @Param('id') id: string,
+    @Body('valor', ParseFloatPipe) valor: number,
+  ) {
+    return this.usuarioService.removerSaldo(+id, valor);
+  }
+
+  @Get(':id/saldo')
+  getSaldo(@Param('id') id: string) {
+    return this.usuarioService.getSaldo(+id);
+  }
+
+}
+
