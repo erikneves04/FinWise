@@ -4,7 +4,7 @@ import { UsuarioController } from './usuario.controller';
 import { PrismaModule } from '../../prisma/prisma.module'; // <-- importa aqui
 
 @Module({
-  imports: [PrismaModule], // <-- e adiciona aqui
+  imports: [PrismaModule],
   controllers: [UsuarioController],
   providers: [UsuarioService],
 })

@@ -2,6 +2,8 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { CreateDespesaDto } from 'src/despesas/dto/create-despesa.dto';
+import { UpdateDespesaDto } from 'src/despesas/dto/update-despesa.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -41,6 +43,65 @@ export class UsuarioService {
     await this.findOne(id); // garante que o usuário existe
     return this.prisma.user.delete({
       where: { id },
+    });
+  }
+
+  async criarDespesa(usuarioId: number, dto: CreateDespesaDto) {
+    return this.prisma.despesa.create({
+      data: {
+        ...dto,
+        usuarioId,
+      },
+    });
+  }
+
+  async getDespesas(usuarioId: number) {
+    return this.prisma.despesa.findMany({
+      where: { usuarioId },
+    });
+  }
+
+  async buscarDespesaPorId(usuarioId: number, despesaId: number) {
+    const despesa = await this.prisma.despesa.findFirst({
+      where: {
+        id: despesaId,
+        usuarioId,
+      },
+    });
+  
+    if (!despesa) {
+      throw new NotFoundException('Despesa não encontrada para este usuário.');
+    }
+  
+    return despesa;
+  }
+
+  async atualizarDespesa(usuarioId: number, despesaId: number, dto: UpdateDespesaDto) {
+    const despesa = await this.prisma.despesa.findFirst({
+      where: { id: despesaId, usuarioId },
+    });
+
+    if (!despesa) {
+      throw new NotFoundException('Despesa não encontrada para este usuário.');
+    }
+
+    return this.prisma.despesa.update({
+      where: { id: despesaId },
+      data: dto,
+    });
+  }
+
+  async deletarDespesa(usuarioId: number, despesaId: number) {
+    const despesa = await this.prisma.despesa.findFirst({
+      where: { id: despesaId, usuarioId },
+    });
+
+    if (!despesa) {
+      throw new NotFoundException('Despesa não encontrada para este usuário.');
+    }
+
+    return this.prisma.despesa.delete({
+      where: { id: despesaId },
     });
   }
 
