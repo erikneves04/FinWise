@@ -28,9 +28,9 @@ export type RootStackParamList = {
   ConfirmRegister: undefined;
   HomePage: { reset?: boolean };
   MyData: undefined;
-  RegisterIncome: undefined;
+  RegisterIncome: { income?: any };
   IncomeList: undefined;
-  RegisterExpense: undefined;
+  RegisterExpense: { expense?: any };
   ExpenseList: undefined;
 };
 

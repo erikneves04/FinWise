@@ -129,7 +129,7 @@ export default function IncomeList({ navigation }: Props) {
 
       <Pressable
         style={styles.fab}
-        onPress={() => navigation.navigate("RegisterIncome")}
+        onPress={() => navigation.navigate("RegisterIncome", { income: undefined })}
       >
         <Ionicons name="add" size={32} color="white" />
       </Pressable>
