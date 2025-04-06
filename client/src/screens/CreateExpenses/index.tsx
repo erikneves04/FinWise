@@ -1,15 +1,25 @@
-import { StyleSheet, Text, View, TextInput, Platform, Pressable, Dimensions, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { StyleSheet, Dimensions } from 'react-native';
+import { useEffect, useState } from 'react';
 import { Background } from '../../components/Background';
-import { ButtonWrapper, HeaderView, RegisterContainer, RegisterRevenueButton, RegisterRevenueText, TextFieldWrapper, Title, TitleWrapper, TypeButton, TypeContainer, TypeLabel, TypeText } from "./styles";
+import {
+  ButtonWrapper,
+  HeaderView,
+  RegisterContainer,
+  TextFieldWrapper,
+  Title,
+  TitleWrapper,
+  TypeButton,
+  TypeContainer,
+  TypeLabel,
+  TypeText
+} from "./styles";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../../App';
 
 import { SubtitleBlue, SubtitleGrey } from '../styles.Global';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
-import LogoItem from '../../assets/svg/logo';
 import BagOfMoney from '../../assets/svg/bagOfMoney';
 import { Modal } from '../../components/Modal';
 import { TextField } from '../../components/TextField';
@@ -17,25 +27,47 @@ import { formatInputDate, handleValueChange } from '../../utils/functions';
 import { NavigationButton } from '../../components/NavigationButton';
 
 const screenWidth = Dimensions.get("window").width;
-const IncomeTypes = ['Alimentação', 'Mensalidades', 'Internet', 'Lazer', 'Outros']
+const ExpenseTypes = ['Alimentação', 'Fixo', 'Transporte', 'Lazer', 'Outros'];
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "RegisterExpense"
 >;
+
+type ExpenseRouteProp = RouteProp<RootStackParamList, "RegisterExpense">;
+
 type Props = {
   navigation: ScreenNavigationProp;
 };
 
 export default function RegisterExpense({ navigation }: Props) {
-  const [incomeData, setIncomeData] = useState({
+  const route = useRoute<ExpenseRouteProp>();
+  const isEditing = !!route.params?.expense;
+
+  const [incomeData, setExpenseData] = useState({
+    id: "",
     name: "",
     value: "",
     date: "",
     type: "",
   });
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  useEffect(() => {
+    if (route.params?.expense) {
+      // converter de "DD/MM/YYYY" para "YYYY-MM-DD"
+      const [day, month, year] = route.params.expense.date.split("/");
+      const unmaskedDate = `${year}-${month}-${day}`;
+      setExpenseData({
+        ...route.params.expense,
+        date: unmaskedDate,
+      });
+      
+    }
+  }, []);
+
+  const formatDate = (date: any) => {
+    return moment(date).format("DD/MM/YYYY");
+  };
 
   const onCreatePress = async () => {
     if (!incomeData.name || !incomeData.value || !incomeData.date || !incomeData.type) {
@@ -48,20 +80,15 @@ export default function RegisterExpense({ navigation }: Props) {
       return;
     }
 
-    // TODO: Lógica de cadastro
-    alert("BOTÃO DE CADASTRO ACIONADO MAS AINDA NÃO IMPLEMENTADO!");
-  };
+    if (isEditing) {
+      alert("Edição acionada mas ainda não implementada!");
+      // TODO: lógica de edição
+    } else {
+      alert("Cadastro acionado mas ainda não implementado!");
+      // TODO: lógica de criação
+    }
 
-  const formatDate = (date: any) => {
-    return moment(date).format("DD/MM/YYYY");
-  };
-
-  const onRegisterRevenuePress = async () => {
-    navigation.navigate("HomePage")
-  }
-
-  const updateIncomeData = (newData: any) => {
-    setIncomeData({ ...incomeData, ...newData });
+    navigation.navigate("ExpenseList");
   };
 
   return (
@@ -69,8 +96,8 @@ export default function RegisterExpense({ navigation }: Props) {
       <Modal height='73'>
         <TitleWrapper>
           <HeaderView>
-            <BagOfMoney height={50} width={40} expense/>
-            <Title>Criar despesa</Title>
+            <BagOfMoney height={50} width={40} expense />
+            <Title>{isEditing ? "Editar despesa" : "Criar despesa"}</Title>
           </HeaderView>
         </TitleWrapper>
 
@@ -80,7 +107,7 @@ export default function RegisterExpense({ navigation }: Props) {
             label="Despesa"
             placeholder="Digite aqui o nome da despesa"
             autoCapitalize="words"
-            onChange={(text) => setIncomeData({ ...incomeData, name: text })}
+            onChange={(text) => setExpenseData({ ...incomeData, name: text })}
             value={incomeData.name}
           />
         </TextFieldWrapper>
@@ -93,7 +120,7 @@ export default function RegisterExpense({ navigation }: Props) {
             autoCapitalize="words"
             keyboardType="numeric"
             onChange={(text: string) =>
-              setIncomeData((prevData) => ({
+              setExpenseData((prevData) => ({
                 ...prevData,
                 value: handleValueChange(text),
               }))
@@ -109,7 +136,7 @@ export default function RegisterExpense({ navigation }: Props) {
             placeholder="Selecionar data"
             value={incomeData.date ? formatDate(incomeData.date) : ""}
             onChange={(masked, unmasked) =>
-              setIncomeData((prevData) => ({
+              setExpenseData((prevData) => ({
                 ...prevData,
                 date: unmasked,
               }))
@@ -120,10 +147,10 @@ export default function RegisterExpense({ navigation }: Props) {
 
         <TypeLabel>Tipo:</TypeLabel>
         <TypeContainer>
-          {IncomeTypes.map((type) => (
+          {ExpenseTypes.map((type) => (
             <TypeButton
               key={type}
-              onPress={() => setIncomeData({ ...incomeData, type })}
+              onPress={() => setExpenseData({ ...incomeData, type })}
               selected={incomeData.type === type}
             >
               <TypeText selected={incomeData.type === type}>{type}</TypeText>
@@ -135,32 +162,23 @@ export default function RegisterExpense({ navigation }: Props) {
           <NavigationButton
             height={40}
             width={70}
-            buttonText="Cadastrar"
-            action={onRegisterRevenuePress}
+            buttonText={isEditing ? "Salvar" : "Cadastrar"}
+            action={onCreatePress}
           />
         </ButtonWrapper>
 
-        <RegisterContainer onPress={() => navigation.navigate("ExpenseList")}>
-          <SubtitleGrey>Ver despesas cadastradas?</SubtitleGrey>
-          <SubtitleBlue> Acesse aqui!</SubtitleBlue>
-        </RegisterContainer>
+        {!isEditing && (
+          <RegisterContainer onPress={() => navigation.navigate("ExpenseList")}>
+            <SubtitleGrey>Ver despesas cadastradas?</SubtitleGrey>
+            <SubtitleBlue> Acesse aqui!</SubtitleBlue>
+          </RegisterContainer>
+        )}
       </Modal>
-    </Background >
+    </Background>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: 100,
-    width: 200,
-    backgroundColor: '#F0F0F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  text: {
-    textAlign: 'center',
-  },
   formContainer: {
     padding: 20,
   },
