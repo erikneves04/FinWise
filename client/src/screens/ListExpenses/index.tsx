@@ -91,7 +91,7 @@ export default function ExpenseList({ navigation }: Props) {
         <Ionicons name={viewMode === "table" ? "grid" : "list"} size={28} color="white" />
       </Pressable>
 
-      <Pressable style={styles.fab} onPress={() => navigation.navigate("RegisterIncome")}>
+      <Pressable style={styles.fab} onPress={() => navigation.navigate("RegisterExpense")}>
         <Ionicons name="add" size={32} color="white" />
       </Pressable>
     </Background>
