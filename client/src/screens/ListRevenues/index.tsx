@@ -56,6 +56,8 @@ export default function IncomeList({ navigation }: Props) {
   const handleDelete = (id: string) => {
     setIncomes((prev) => prev.filter((item) => item.id !== id));
     setShowModal(false);
+
+    alert('Delete acionado mas a ação ainda não foi implementada.')
   };
 
   const confirmDelete = (income: any) => {
@@ -132,7 +134,6 @@ export default function IncomeList({ navigation }: Props) {
         <Ionicons name="add" size={32} color="white" />
       </Pressable>
 
-      {/* Modal de Confirmação */}
       <Modal
         visible={showModal}
         transparent
@@ -145,10 +146,10 @@ export default function IncomeList({ navigation }: Props) {
             {selectedIncome && (
               <>
                 <Text>Você deseja excluir a receita abaixo?</Text>
-                <Text style={styles.bold}>Nome:</Text> <Text>{selectedIncome.name}</Text>
-                <Text style={styles.bold}>Valor:</Text> <Text>R$ {selectedIncome.value}</Text>
-                <Text style={styles.bold}>Data:</Text> <Text>{selectedIncome.date}</Text>
-                <Text style={styles.bold}>Tipo:</Text> <Text>{selectedIncome.type}</Text>
+                <Text><Text style={styles.bold}>Nome:</Text> {selectedIncome.name}</Text>
+                <Text><Text style={styles.bold}>Valor:</Text> R$ {selectedIncome.value}</Text>
+                <Text><Text style={styles.bold}>Data:</Text> {selectedIncome.date}</Text>
+                <Text><Text style={styles.bold}>Tipo:</Text> {selectedIncome.type}</Text>
               </>
             )}
             <View style={styles.modalButtons}>
@@ -243,22 +244,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     elevation: 5,
-  },
-  actions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginTop: 10,
-  },
-  editBtn: {
-    backgroundColor: "#3FC44E",
-    padding: 8,
-    borderRadius: 5,
-  },
-  deleteBtn: {
-    backgroundColor: "#FF3B30",
-    padding: 8,
-    borderRadius: 5,
   },
   modalBackground: {
     flex: 1,
