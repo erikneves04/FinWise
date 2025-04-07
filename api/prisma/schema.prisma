@@ -21,4 +21,29 @@ model User {
   senha          String
   dataNascimento DateTime
   saldo          Float    @default(0.0)
+<<<<<<< HEAD
+=======
+
+  despesas Despesa[]
+>>>>>>> feat/back/despesas
+}
+
+model Despesa {
+  id          Int          @id @default(autoincrement())
+  descricao   String
+  valor       Float
+  tipo        DespesaTipo
+  data        DateTime
+  user         User         @relation(fields: [usuarioId], references: [id])
+  usuarioId   Int
+
+  @@map("despesas")
+}
+
+enum DespesaTipo {
+  fixo
+  conta
+  alimentacao
+  lazer
+  saude
 }
