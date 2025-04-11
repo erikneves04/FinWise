@@ -29,12 +29,12 @@ export class UsuarioController {
     @Param('id', ParseIntPipe) id: number,
     @Body() createDespesaDto: CreateDespesaDto,
   ) {
-    return this.usuarioService.criarDespesa(id, createDespesaDto);
+    return this.usuarioService.createExpense(id, createDespesaDto);
   }
 
   @Get(':id/despesas')
   async getDespesasDoUsuario(@Param('id', ParseIntPipe) id: number) {
-    return this.usuarioService.getDespesas(id);
+    return this.usuarioService.getExpenses(id);
   }
 
   @Get(':id/despesas/:despesaId')
@@ -42,7 +42,7 @@ export class UsuarioController {
     @Param('id', ParseIntPipe) usuarioId: number,
     @Param('despesaId', ParseIntPipe) despesaId: number,
   ) {
-    return this.usuarioService.buscarDespesaPorId(usuarioId, despesaId);
+    return this.usuarioService.getExpenseById(usuarioId, despesaId);
   }
 
   @Patch(':usuarioId/despesas/:despesaId')
@@ -51,7 +51,7 @@ export class UsuarioController {
     @Param('despesaId', ParseIntPipe) despesaId: number,
     @Body() updateDespesaDto: UpdateDespesaDto,
   ) {
-    return this.usuarioService.atualizarDespesa(usuarioId, despesaId, updateDespesaDto);
+    return this.usuarioService.updateExpense(usuarioId, despesaId, updateDespesaDto);
   }
 
   @Delete(':usuarioId/despesas/:despesaId')
@@ -59,7 +59,7 @@ export class UsuarioController {
     @Param('usuarioId', ParseIntPipe) usuarioId: number,
     @Param('despesaId', ParseIntPipe) despesaId: number,
   ) {
-    return this.usuarioService.deletarDespesa(usuarioId, despesaId);
+    return this.usuarioService.deleteExpense(usuarioId, despesaId);
   }
 
   @Patch(':id')
@@ -77,7 +77,7 @@ export class UsuarioController {
     @Param('id') id: number,
     @Body('valor', ParseFloatPipe) valor: number,
   ) {
-    return this.usuarioService.adicionarSaldo(+id, valor);
+    return this.usuarioService.addBalance(+id, valor);
   }
 
   @Post(':id/saldo/remover')
@@ -85,12 +85,12 @@ export class UsuarioController {
     @Param('id') id: number,
     @Body('valor', ParseFloatPipe) valor: number,
   ) {
-    return this.usuarioService.removerSaldo(+id, valor);
+    return this.usuarioService.removeBalance(+id, valor);
   }
 
   @Get(':id/saldo')
   getSaldo(@Param('id') id: number) {
-    return this.usuarioService.getSaldo(+id);
+    return this.usuarioService.getBalance(+id);
   }
 }
 

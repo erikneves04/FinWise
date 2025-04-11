@@ -21,11 +21,7 @@ model User {
   senha          String
   dataNascimento DateTime
   saldo          Float    @default(0.0)
-<<<<<<< HEAD
-=======
-
   despesas Despesa[]
->>>>>>> feat/back/despesas
 }
 
 model Despesa {

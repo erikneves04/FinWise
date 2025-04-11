@@ -32,7 +32,7 @@ export class UsuarioService {
   }
 
   async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    await this.findOne(id); // garante que o usuário existe
+    await this.findOne(id);
     return this.prisma.user.update({
       where: { id },
       data: updateUsuarioDto,
@@ -40,28 +40,43 @@ export class UsuarioService {
   }
 
   async remove(id: number) {
-    await this.findOne(id); // garante que o usuário existe
+    await this.findOne(id); 
     return this.prisma.user.delete({
       where: { id },
     });
   }
 
-  async criarDespesa(usuarioId: number, dto: CreateDespesaDto) {
-    return this.prisma.despesa.create({
+  async createExpense(usuarioId: number, dto: CreateDespesaDto) {
+    const usuario = await this.findOne(usuarioId);
+  
+    if (usuario.saldo < dto.valor) {
+      throw new BadRequestException('Saldo insuficiente para criar a despesa.');
+    }
+  
+    const despesa = await this.prisma.despesa.create({
       data: {
         ...dto,
         usuarioId,
       },
     });
+  
+    await this.prisma.user.update({
+      where: { id: usuarioId },
+      data: {
+        saldo: usuario.saldo - dto.valor,
+      },
+    });
+  
+    return despesa;
   }
 
-  async getDespesas(usuarioId: number) {
+  async getExpenses(usuarioId: number) {
     return this.prisma.despesa.findMany({
       where: { usuarioId },
     });
   }
 
-  async buscarDespesaPorId(usuarioId: number, despesaId: number) {
+  async getExpenseById(usuarioId: number, despesaId: number) {
     const despesa = await this.prisma.despesa.findFirst({
       where: {
         id: despesaId,
@@ -76,36 +91,63 @@ export class UsuarioService {
     return despesa;
   }
 
-  async atualizarDespesa(usuarioId: number, despesaId: number, dto: UpdateDespesaDto) {
-    const despesa = await this.prisma.despesa.findFirst({
+  async updateExpense(usuarioId: number, despesaId: number, dto: UpdateDespesaDto) {
+    const despesaAntiga = await this.prisma.despesa.findFirst({
       where: { id: despesaId, usuarioId },
     });
-
-    if (!despesa) {
+  
+    if (!despesaAntiga) {
       throw new NotFoundException('Despesa não encontrada para este usuário.');
     }
-
+  
+    const diferenca = dto.valor - despesaAntiga.valor;
+    const usuario = await this.findOne(usuarioId);
+  
+    if (diferenca > 0 && usuario.saldo < diferenca) {
+      throw new BadRequestException('Saldo insuficiente para atualizar a despesa.');
+    }
+  
+    // Atualiza o saldo conforme a diferença
+    await this.prisma.user.update({
+      where: { id: usuarioId },
+      data: {
+        saldo: usuario.saldo - diferenca,
+      },
+    });
+  
+    // Atualiza a despesa
     return this.prisma.despesa.update({
       where: { id: despesaId },
       data: dto,
     });
-  }
+  }  
 
-  async deletarDespesa(usuarioId: number, despesaId: number) {
+  async deleteExpense(usuarioId: number, despesaId: number) {
     const despesa = await this.prisma.despesa.findFirst({
       where: { id: despesaId, usuarioId },
     });
-
+  
     if (!despesa) {
       throw new NotFoundException('Despesa não encontrada para este usuário.');
     }
-
-    return this.prisma.despesa.delete({
+  
+    await this.prisma.despesa.delete({
       where: { id: despesaId },
     });
+  
+    // Reembolsa o valor da despesa no saldo do usuário
+    const usuario = await this.findOne(usuarioId);
+    await this.prisma.user.update({
+      where: { id: usuarioId },
+      data: {
+        saldo: usuario.saldo + despesa.valor,
+      },
+    });
+  
+    return { message: 'Despesa excluída e valor reembolsado ao saldo.' };
   }
 
-  async adicionarSaldo(id: number, valor: number) {
+  async addBalance(id: number, valor: number) {
     const usuario = await this.findOne(id);
     return this.prisma.user.update({
       where: { id },
@@ -115,7 +157,7 @@ export class UsuarioService {
     });
   }
 
-  async removerSaldo(id: number, valor: number) {
+  async removeBalance(id: number, valor: number) {
     const usuario = await this.findOne(id);
     if (usuario.saldo < valor) {
       throw new BadRequestException('Saldo insuficiente');
@@ -128,7 +170,7 @@ export class UsuarioService {
     });
   }
 
-  async getSaldo(id: number) {
+  async getBalance(id: number) {
     const usuario = await this.findOne(id);
     return { saldo: usuario.saldo };
   }
