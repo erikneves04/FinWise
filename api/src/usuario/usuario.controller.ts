@@ -65,21 +65,25 @@ export class UsuarioController {
     return this.usuarioService.remove(user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('despesas')
   createDespesa(@User() user: any, @Body() dto: CreateDespesaDto): Promise<Despesa> {
     return this.usuarioService.createExpense(user.id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('despesas')
   getDespesas(@User() user: any): Promise<Despesa[]> {
     return this.usuarioService.getExpenses(user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('despesas/:despesaId')
   getDespesa(@User() user: any, @Param('despesaId') despesaId: number): Promise<Despesa | null> {
     return this.usuarioService.getExpenseById(user, +despesaId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('despesas/:despesaId')
   updateDespesa(
     @User() user: any,
