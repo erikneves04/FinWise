@@ -9,35 +9,50 @@ export class EstatisticasService {
     const despesas = await this.prisma.despesa.findMany({
       where: { usuarioId },
     });
-
+  
     const total = despesas.reduce((soma, d) => soma + d.valor, 0);
-
-    const porCategoria: Record<string, number> = {};
-
+  
+    const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
+  
     for (const despesa of despesas) {
-      porCategoria[despesa.tipo] = (porCategoria[despesa.tipo] || 0) + despesa.valor;
+      if (!porCategoria[despesa.tipo]) {
+        porCategoria[despesa.tipo] = { valor: 0, quantidade: 0 };
+      }
+      porCategoria[despesa.tipo].valor += despesa.valor;
+      porCategoria[despesa.tipo].quantidade += 1;
     }
-
-    const porcentagemPorCategoria = total > 0
+  
+    const porcentagemPorCategoriaValor = total > 0
       ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, valor]) => [
+          Object.entries(porCategoria).map(([tipo, { valor }]) => [
             tipo,
-            Number(((valor / total) * 100).toFixed(2)), // Duas casas decimais
+            Number(((valor / total) * 100).toFixed(2)), 
           ])
         )
       : {};
-
+  
+    const porcentagemPorCategoriaQuantidade = despesas.length > 0
+      ? Object.fromEntries(
+          Object.entries(porCategoria).map(([tipo, { quantidade }]) => [
+            tipo,
+            Number(((quantidade / despesas.length) * 100).toFixed(2)),
+          ])
+        )
+      : {};
+  
     const categoriaMaisCara = Object.entries(porCategoria).reduce(
-      (max, atual) => (atual[1] > max[1] ? atual : max),
-      ['', 0]
+      (max, atual) => (atual[1].valor > max[1].valor ? atual : max),
+      ['', { valor: 0, quantidade: 0 }]
     )[0];
-
+  
     return {
       total,
       porCategoria,
-      porcentagemPorCategoria,
+      porcentagemPorCategoriaValor,
+      porcentagemPorCategoriaQuantidade,
       categoriaMaisCara: categoriaMaisCara || null,
       totalDespesas: despesas.length,
     };
   }
+  
 }
