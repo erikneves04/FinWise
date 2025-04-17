@@ -6,22 +6,22 @@ import { CreateDespesaDto } from 'src/despesas/dto/create-despesa.dto';
 import { UpdateDespesaDto } from 'src/despesas/dto/update-despesa.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '../auth/usuario.decorator';
-
+import { User as PrismaUser, Despesa } from '@prisma/client';
 @Injectable()
 export class UsuarioService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(dto: CreateUsuarioDto) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
-  
+
     if (existingUser) {
       throw new BadRequestException('E-mail já está em uso.');
     }
-  
+
     const hashed = await bcrypt.hash(dto.senha, 10);
-  
+
     return this.prisma.user.create({
       data: {
         ...dto,
@@ -30,7 +30,7 @@ export class UsuarioService {
     });
   }
 
-  findAll() {
+  async findAll(): Promise<PrismaUser[]> {
     return this.prisma.user.findMany();
   }
 
@@ -61,8 +61,8 @@ export class UsuarioService {
     });
   }
 
-  async createExpense(id: number, dto: CreateDespesaDto) {
-    const usuario = await this.findOne(id); 
+  async createExpense(id: number, dto: CreateDespesaDto): Promise<Despesa> {  // Anotação explícita do tipo de retorno
+    const usuario = await this.findOne(id);
 
     if (usuario.saldo < dto.valor) {
       throw new BadRequestException('Saldo insuficiente para criar a despesa.');
@@ -85,13 +85,13 @@ export class UsuarioService {
     return despesa;
   }
 
-  async getExpenses(@User() user: any) {
+  async getExpenses(@User() user: any): Promise<Despesa[]> {
     return this.prisma.despesa.findMany({
       where: { usuarioId: user.id },
     });
   }
 
-  async getExpenseById(id: number, despesaId: number) {
+  async getExpenseById(id: number, despesaId: number): Promise<Despesa> { 
     const despesa = await this.prisma.despesa.findFirst({
       where: {
         usuarioId: id,
@@ -106,14 +106,14 @@ export class UsuarioService {
     return despesa;
   }
 
-  async updateExpense(@User() user: any, despesaId: number, dto: UpdateDespesaDto) {
+  async updateExpense(@User() user: any, despesaId: number, dto: UpdateDespesaDto): Promise<Despesa> {
     const despesaAntiga = await this.prisma.despesa.findFirst({
       where: { usuarioId: user.id, id: despesaId },
     });
 
     if (!despesaAntiga) {
-      console.log("UsuarioID: " + user.id)
-      console.log("DespesaID: " + despesaId)
+      console.log("UsuarioID: " + user.id);
+      console.log("DespesaID: " + despesaId);
       throw new NotFoundException('Despesa não encontrada para este usuário.');
     }
 
@@ -143,7 +143,7 @@ export class UsuarioService {
     const despesa = await this.prisma.despesa.findFirst({
       where: { id: despesaId, usuarioId: user.id },
     });
-    
+
 
     if (!despesa) {
       throw new NotFoundException('Despesa não encontrada para este usuário.');

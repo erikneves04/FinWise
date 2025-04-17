@@ -17,6 +17,8 @@ import { UpdateDespesaDto } from 'src/despesas/dto/update-despesa.dto';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../auth/usuario.decorator';
+import { Despesa } from '@prisma/client';
+
 
 @Controller('usuario')
 export class UsuarioController {
@@ -63,33 +65,31 @@ export class UsuarioController {
     return this.usuarioService.remove(user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('despesas')
-  createDespesa(@User() user: any, @Body() dto: CreateDespesaDto) {
+  createDespesa(@User() user: any, @Body() dto: CreateDespesaDto): Promise<Despesa> {
     return this.usuarioService.createExpense(user.id, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('despesas')
-  getDespesas(@User() user: any) {
+  getDespesas(@User() user: any): Promise<Despesa[]> {
     return this.usuarioService.getExpenses(user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('despesas/:despesaId')
-  getDespesa(@User() user: any, @Param('despesaId') despesaId: number) {
+  getDespesa(@User() user: any, @Param('despesaId') despesaId: number): Promise<Despesa | null> {
     return this.usuarioService.getExpenseById(user, +despesaId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch('despesas/:despesaId')
   updateDespesa(
     @User() user: any,
     @Param('despesaId') despesaId: number,
     @Body() dto: UpdateDespesaDto,
-  ) {
+  ): Promise<Despesa> {
     return this.usuarioService.updateExpense(user, +despesaId, dto);
   }
+
+  
 
   @UseGuards(JwtAuthGuard)
   @Delete('despesas/:despesaId')
