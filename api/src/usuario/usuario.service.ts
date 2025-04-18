@@ -7,6 +7,8 @@ import { UpdateDespesaDto } from 'src/despesas/dto/update-despesa.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '../auth/usuario.decorator';
 import { User as PrismaUser, Despesa } from '@prisma/client';
+import { DespesaTipo } from '@prisma/client'; 
+
 @Injectable()
 export class UsuarioService {
   constructor(private prisma: PrismaService) { }
@@ -61,9 +63,13 @@ export class UsuarioService {
     });
   }
 
-  async createExpense(id: number, dto: CreateDespesaDto): Promise<Despesa> {  // Anotação explícita do tipo de retorno
+  async createExpense(id: number, dto: CreateDespesaDto): Promise<Despesa> {
     const usuario = await this.findOne(id);
-
+  
+    // Verificando se o tipo da despesa é válido
+    if (!Object.values(DespesaTipo).includes(dto.tipo)) {
+      throw new BadRequestException('Tipo de despesa inválido.');
+    }
     if (usuario.saldo < dto.valor) {
       throw new BadRequestException('Saldo insuficiente para criar a despesa.');
     }
@@ -84,6 +90,7 @@ export class UsuarioService {
 
     return despesa;
   }
+  
 
   async getExpenses(@User() user: any): Promise<Despesa[]> {
     return this.prisma.despesa.findMany({
