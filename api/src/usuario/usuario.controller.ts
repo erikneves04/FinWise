@@ -1,96 +1,123 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ParseFloatPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Delete,
+  UseGuards,
+  ParseFloatPipe,
+  Param
+} from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { CreateDespesaDto } from 'src/despesas/dto/create-despesa.dto';
 import { UpdateDespesaDto } from 'src/despesas/dto/update-despesa.dto';
+import { AuthService } from '../auth/auth.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { User } from '../auth/usuario.decorator';
+import { Despesa } from '@prisma/client';
+
 
 @Controller('usuario')
 export class UsuarioController {
-  constructor(private readonly usuarioService: UsuarioService) { }
+  constructor(
+    private readonly usuarioService: UsuarioService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
   }
 
-  @Get()
-  findAll() {
+  @Post('login')
+  async login(@Body() body: { email: string; senha: string }) {
+    return this.authService.login(body.email, body.senha);
+  }
+
+  @Post('logout')
+  logout() {
+    return { message: 'Logout bem-sucedido. Exclua o token no cliente.' };
+  }
+
+  /* @Get('usuario')
+  getAllUsers() {
     return this.usuarioService.findAll();
+  } */
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  getPerfil(@User() user: any) {
+    return this.usuarioService.findOne(user.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.usuarioService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  update(@User() user: any, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuarioService.update(user.id, updateUsuarioDto);
   }
 
-  @Post(':id/despesas')
-  createDespesa(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() createDespesaDto: CreateDespesaDto,
-  ) {
-    return this.usuarioService.createExpense(id, createDespesaDto);
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  remove(@User() user: any) {
+    return this.usuarioService.remove(user.id);
   }
 
-  @Get(':id/despesas')
-  async getDespesasDoUsuario(@Param('id', ParseIntPipe) id: number) {
-    return this.usuarioService.getExpenses(id);
+  @Post('despesas')
+  createDespesa(@User() user: any, @Body() dto: CreateDespesaDto): Promise<Despesa> {
+    return this.usuarioService.createExpense(user.id, dto);
   }
 
-  @Get(':id/despesas/:despesaId')
-  async buscarDespesaPorId(
-    @Param('id', ParseIntPipe) usuarioId: number,
-    @Param('despesaId', ParseIntPipe) despesaId: number,
-  ) {
-    return this.usuarioService.getExpenseById(usuarioId, despesaId);
+  @Get('despesas')
+  getDespesas(@User() user: any): Promise<Despesa[]> {
+    return this.usuarioService.getExpenses(user.id);
   }
 
-  @Patch(':usuarioId/despesas/:despesaId')
+  @Get('despesas/:despesaId')
+  getDespesa(@User() user: any, @Param('despesaId') despesaId: number): Promise<Despesa | null> {
+    return this.usuarioService.getExpenseById(user, +despesaId);
+  }
+
+  @Patch('despesas/:despesaId')
   updateDespesa(
-    @Param('usuarioId', ParseIntPipe) usuarioId: number,
-    @Param('despesaId', ParseIntPipe) despesaId: number,
-    @Body() updateDespesaDto: UpdateDespesaDto,
-  ) {
-    return this.usuarioService.updateExpense(usuarioId, despesaId, updateDespesaDto);
+    @User() user: any,
+    @Param('despesaId') despesaId: number,
+    @Body() dto: UpdateDespesaDto,
+  ): Promise<Despesa> {
+    return this.usuarioService.updateExpense(user, +despesaId, dto);
   }
 
-  @Delete(':usuarioId/despesas/:despesaId')
-  deleteDespesa(
-    @Param('usuarioId', ParseIntPipe) usuarioId: number,
-    @Param('despesaId', ParseIntPipe) despesaId: number,
-  ) {
-    return this.usuarioService.deleteExpense(usuarioId, despesaId);
+  
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('despesas/:despesaId')
+  deleteDespesa(@User() user: any, @Param('despesaId') despesaId: number) {
+    return this.usuarioService.deleteExpense(user, +despesaId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioService.update(+id, updateUsuarioDto);
+  @UseGuards(JwtAuthGuard)
+  @Get('saldo')
+  getSaldo(@User() user: any) {
+    return this.usuarioService.getBalance(user);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.usuarioService.remove(+id);
-  }
-
-  @Post(':id/saldo/adicionar')
+  @UseGuards(JwtAuthGuard)
+  @Post('saldo/adicionar')
   adicionarSaldo(
-    @Param('id') id: number,
+    @User() user: any,
     @Body('valor', ParseFloatPipe) valor: number,
   ) {
-    return this.usuarioService.addBalance(+id, valor);
+    return this.usuarioService.addBalance(user, valor);
   }
 
-  @Post(':id/saldo/remover')
+  @UseGuards(JwtAuthGuard)
+  @Post('saldo/remover')
   removerSaldo(
-    @Param('id') id: number,
+    @User() user: any,
     @Body('valor', ParseFloatPipe) valor: number,
   ) {
-    return this.usuarioService.removeBalance(+id, valor);
-  }
-
-  @Get(':id/saldo')
-  getSaldo(@Param('id') id: number) {
-    return this.usuarioService.getBalance(+id);
+    return this.usuarioService.removeBalance(user, valor);
   }
 }
-
