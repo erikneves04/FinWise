@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../auth/usuario.decorator';
 import { User as PrismaUser, Despesa } from '@prisma/client';
 import { DespesaTipo } from '@prisma/client'; 
+
 @Injectable()
 export class UsuarioService {
   constructor(private prisma: PrismaService) { }
@@ -69,25 +70,24 @@ export class UsuarioService {
     if (!Object.values(DespesaTipo).includes(dto.tipo)) {
       throw new BadRequestException('Tipo de despesa inválido.');
     }
-  
     if (usuario.saldo < dto.valor) {
       throw new BadRequestException('Saldo insuficiente para criar a despesa.');
     }
-  
+
     const despesa = await this.prisma.despesa.create({
       data: {
         ...dto,
         usuarioId: usuario.id,
       },
     });
-  
+
     await this.prisma.user.update({
       where: { id: usuario.id },
       data: {
         saldo: usuario.saldo - dto.valor,
       },
     });
-  
+
     return despesa;
   }
   

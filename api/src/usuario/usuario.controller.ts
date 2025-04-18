@@ -65,11 +65,13 @@ export class UsuarioController {
     return this.usuarioService.remove(user.id);
   }
 
+
   @UseGuards(JwtAuthGuard)
   @Post('despesas')
   createDespesa(@User() user: any, @Body() dto: CreateDespesaDto): Promise<Despesa> {
     return this.usuarioService.createExpense(user.id, dto);
   }
+
 
   @UseGuards(JwtAuthGuard)
   @Get('despesas')
@@ -82,6 +84,7 @@ export class UsuarioController {
   getDespesa(@User() user: any, @Param('despesaId') despesaId: number): Promise<Despesa | null> {
     return this.usuarioService.getExpenseById(user, +despesaId);
   }
+
 
   @UseGuards(JwtAuthGuard)
   @Patch('despesas/:despesaId')
