@@ -37,10 +37,11 @@ export const CreatReport = styled.Text`
 
 export const Cell = styled.Text`
   flex: 1;
-  textAlign: center;
+  text-align: center;
   font-size: ${RFValue(14, hp(100))}px;
   font-family: "Quicksand-SemiBold";
-
+  flex-wrap: wrap;
+  text-align-vertical: center;
 `
 
 

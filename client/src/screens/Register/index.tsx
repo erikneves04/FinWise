@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../../../App';
@@ -13,7 +13,6 @@ import {
   ButtonWrapper,
   RegisterContainer,
   SubtitleWrapper,
-  LogoView,
   MainView
 } from "./styles";
 
@@ -22,6 +21,10 @@ import { inputMasks } from "../../utils/inputMasks";
 import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
 import { TextField } from '../../components/TextField';
 import { Modal } from '../../components/Modal';
+import { CreateUser, CreateUserData } from '../../services/requests/User/CreateUser';
+import { convertToDateISOString, formatInputDate, handleApiError, isEmptyField } from '../../utils/functions';
+import { Loading } from '../../components/Loading';
+import { MessageBalloon } from '../../components/MessageBallon';
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -32,40 +35,67 @@ type Props = {
 };
 
 export default function Register({ navigation }: Props) {
-  const [data, setData] = useState({
-    name: "",
+  const [data, setData] = useState<CreateUserData>({
+    nome: "",
     email: "",
-    password: "",
-    cellNumber: "",
-    birthdate: "",
-    company: "",
+    senha: "",
+    celular: "35988589575",
+    dataNascimento: "",
   });
 
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [date, setDate] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [notSavedDataMsg, setNotSavedDataMsg] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
-  function updateRegisterData(newData: Partial<typeof data>) {
-    setData((prevData) => ({ ...prevData, ...newData }));
+  function updateRegisterData(newLoginData: Partial<CreateUserData>) {
+    if (!data) return;
+    setData({ ...data, ...newLoginData });
   }
 
   const onRegisterPress = async () => {
-    try {
-      navigation.navigate("HomePage");
-    } catch (err: any) {
+    console.log(data)
+    if (isEmptyField(data)) {
+      setErrorMsg("Preencha todos os campos obrigatórias antes.");
+      setError(true);
+      return;
+    }
 
+    if (data.senha !== confirmPassword) {
+      setErrorMsg("As senhas não coincidem.");
+      setError(true);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log(data);
+      await CreateUser(data);
+      navigation.navigate("HomePage");
+      setLoading(false);
+    } catch (err: any) {
+      setErrorMsg(handleApiError(err));
+      setError(true);
+      setLoading(false);
     }
   };
 
   const onLoginPress = async () => {
-    try {
-      navigation.navigate("Login");
-    } catch (err: any) {
-
-    }
+    navigation.navigate("Login");
   };
+
+  useEffect(() => {
+    const isoDate = convertToDateISOString(date);
+    updateRegisterData({ dataNascimento: isoDate ?? undefined });
+  }, [date]);
 
   return (
     <Background>
+      {loading && <Loading />}
       <Modal height='85' borderRadius={3}>
         <MainView>
           <LogoItem height={120} />
@@ -80,8 +110,8 @@ export default function Register({ navigation }: Props) {
               label="Nome Completo"
               placeholder="Digite aqui seu nome completo"
               autoCapitalize="words"
-              onChange={(text) => updateRegisterData({ name: text })}
-              value={data.name}
+              onChange={(text) => updateRegisterData({ nome: text })}
+              value={data.nome}
             />
           </TextFieldWrapper>
 
@@ -104,8 +134,8 @@ export default function Register({ navigation }: Props) {
               placeholder="Digite aqui a sua senha"
               secureTextEntry
               autoCapitalize="none"
-              onChange={(text) => updateRegisterData({ password: text })}
-              value={data.password}
+              onChange={(text) => updateRegisterData({ senha: text })}
+              value={data.senha}
             />
             <TextField
               required
@@ -123,7 +153,7 @@ export default function Register({ navigation }: Props) {
               label="Data de nascimento"
               placeholder="Digite aqui a sua data de nascimento"
               value={date}
-              onChange={setDate}
+              onChange={(text) => setDate(formatInputDate(text))}
               keyboardType="numeric"
             />
           </TextFieldWrapper>
@@ -136,13 +166,35 @@ export default function Register({ navigation }: Props) {
               action={onRegisterPress}
             />
           </ButtonWrapper>
-          
+
           <RegisterContainer onPress={onLoginPress}>
             <SubtitleGrey>Já tem conta?</SubtitleGrey>
             <SubtitleBlue> Faça login!</SubtitleBlue>
           </RegisterContainer>
         </MainView>
       </Modal>
+
+      {notSavedDataMsg && (
+        <MessageBalloon
+          hasGoBackButton
+          title="Atenção"
+          text="Um ou mais itens que não foram salvos serão perdidos com essa ação."
+          handleCancelButton={() => setNotSavedDataMsg(false)}
+          handleConfirmButton={() => {
+            setNotSavedDataMsg(false);
+            navigation.pop();
+          }}
+        />
+      )}
+      {error && (
+        <MessageBalloon
+          title="Atenção"
+          text={errorMsg}
+          handleConfirmButton={() => {
+            setError(false);
+          }}
+        />
+      )}
     </Background>
   );
 }
