@@ -37,16 +37,19 @@
 </p>
 
 ## Backlog do Sprint
-1. Estrutura:
-   -
+1. Tarefas de estruturação inicial:
+   - Criar e configurar a estrutura inicial do aplicativo [Gabriel Prudente]
+   - Criar e configurar o banco de dados []
+   - Criar e configurar a estrutura inicial da API []
+   - Disponibilizar a API e o banco de dados online [Erik Neves]
    
 3. Eu como usuário, gostaria de criar e editar uma conta.
    - Implementar a tela de registro de usuários [Gabriel Prudente]
    - Implementar as rotas de cadastro de usuários na API []
-   - Implementar a tela de login []
+   - Implementar a tela de login [Gabriel Prudente]
    - Implementar as rotas de login na API []
    - Implementar a tela de edição de usuários [Gabriel Prudente]
-   - Implementar as rotas de edição de usuários []
+   - Implementar as rotas de edição de usuários na API []
 
 4. Eu como usuário, gostaria de cadastrar minhas receitas no aplicativo.
    - Implementar a tela de cadastro de receitas [Erik Neves]
@@ -57,11 +60,11 @@
    - Implementar as rotas de listagem de receitas na API []
   
 5. Eu como usuário, gostaria de cadastrar minhas despesas no aplicativo.
-   - Implementar a tela de cadastro de despesa []
+   - Implementar a tela de cadastro de despesa [Gabriel Prudente]
    - Implementar as rotas de cadastro de despesas na API []
-   - Implementar a tela de edição de despesas []
+   - Implementar a tela de edição de despesas [Erik Neves]
    - Implementar as rotas de edição de despesas na API []
-   - Implementar a tela de listagem de despesas []
+   - Implementar a tela de listagem de despesas [Gabriel Prudente]
    - Implementar as rotas de listagem de despesas na API []
   
 6. Eu como usuário, gostaria de visualizar gráficos e estatísticas relacionadas ao meu balanço mensal de transações.
