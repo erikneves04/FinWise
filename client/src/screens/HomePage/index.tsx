@@ -25,32 +25,6 @@ type Props = {
 };
 
 export default function HomePage({ navigation }: Props) {
-  const [data, setData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    cellNumber: "",
-    birthdate: "",
-    company: "",
-  });
-
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [date, setDate] = useState("");
-
-  function updateRegisterData(newData: Partial<typeof data>) {
-    setData((prevData) => ({ ...prevData, ...newData }));
-  }
-
-  
-
-  const onEditDataPress = async () => {
-    try {
-      console.log("entra")
-      navigation.navigate("EditData");
-    } catch (err: any) {
-
-    }
-  };
 
   return (
     <Background>
