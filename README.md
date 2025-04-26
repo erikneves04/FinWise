@@ -39,17 +39,17 @@
 ## Backlog do Sprint
 1. Tarefas de estruturação inicial:
    - Criar e configurar a estrutura inicial do aplicativo [Gabriel Prudente]
-   - Criar e configurar o banco de dados []
-   - Criar e configurar a estrutura inicial da API []
+   - Criar e configurar o banco de dados [Gabriella]
+   - Criar e configurar a estrutura inicial da API [Nicolas]
    - Disponibilizar a API e o banco de dados online [Erik Neves]
    
 3. Eu como usuário, gostaria de criar e editar uma conta.
    - Implementar a tela de registro de usuários [Gabriel Prudente]
-   - Implementar as rotas de cadastro de usuários na API []
+   - Implementar as rotas de cadastro de usuários na API [Gabriella]
    - Implementar a tela de login [Gabriel Prudente]
-   - Implementar as rotas de login na API []
+   - Implementar as rotas de login na API [Nicolas]
    - Implementar a tela de edição de usuários [Gabriel Prudente]
-   - Implementar as rotas de edição de usuários na API []
+   - Implementar as rotas de edição de usuários na API [Nicolas]
 
 4. Eu como usuário, gostaria de cadastrar minhas receitas no aplicativo.
    - Implementar a tela de cadastro de receitas [Erik Neves]
@@ -61,14 +61,14 @@
   
 5. Eu como usuário, gostaria de cadastrar minhas despesas no aplicativo.
    - Implementar a tela de cadastro de despesa [Gabriel Prudente]
-   - Implementar as rotas de cadastro de despesas na API []
+   - Implementar as rotas de cadastro de despesas na API [Nicolas]
    - Implementar a tela de edição de despesas [Erik Neves]
-   - Implementar as rotas de edição de despesas na API []
+   - Implementar as rotas de edição de despesas na API [Nicolas]
    - Implementar a tela de listagem de despesas [Gabriel Prudente]
-   - Implementar as rotas de listagem de despesas na API []
+   - Implementar as rotas de listagem de despesas na API [Nicolas]
   
 6. Eu como usuário, gostaria de visualizar gráficos e estatísticas relacionadas ao meu balanço mensal de transações.
-   - Tarefa [responsável]
+   - Implementar a rota de retornar estatísticas [Gabriella]
 
 ```mermaid
 classDiagram
