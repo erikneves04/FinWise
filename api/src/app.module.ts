@@ -7,6 +7,7 @@ import { DespesasModule } from './despesas/despesas.module';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { EstatisticasModule } from './estatisticas/estatisticas.module';
+import { ReceitasModule } from './receitas/receitas.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { EstatisticasModule } from './estatisticas/estatisticas.module';
     PrismaModule,
     DespesasModule,
     AuthModule,
-    EstatisticasModule],
+    EstatisticasModule,
+    ReceitasModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
