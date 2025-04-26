@@ -70,3 +70,69 @@
 6. Eu como usuário, gostaria de visualizar gráficos e estatísticas relacionadas ao meu balanço mensal de transações.
    - Tarefa [responsável]
 
+```mermaid
+classDiagram
+    class Usuario {
+        +String nome
+        +String email
+        +String senha
+        +login()
+        +editarPerfil()
+    }
+
+    class Conta {
+        +String nome
+        +Float saldo
+        +editarConta()
+    }
+
+    class Receita {
+        +String descricao
+        +Float valor
+        +Date data
+        +cadastrarReceita()
+        +editarReceita()
+    }
+
+    class Despesa {
+        +String descricao
+        +Float valor
+        +Date dataVencimento
+        +Boolean paga
+        +cadastrarDespesa()
+        +editarDespesa()
+    }
+
+    class Cartao {
+        +String numero
+        +String nomeTitular
+        +Date validade
+        +Float limite
+        +cadastrarCartao()
+    }
+
+    class Categoria {
+        +String nome
+        +Float limiteGasto
+        +definirLimite()
+    }
+
+    class Notificacao {
+        +String mensagem
+        +Date dataHora
+        +enviarNotificacao()
+    }
+
+    class ContaFamiliar {
+        +String nome
+        +gerenciarMembros()
+    }
+
+    Usuario o-- Conta
+    Conta o-- Receita
+    Conta o-- Despesa
+    Usuario o-- Cartao
+    Usuario o-- ContaFamiliar
+    Despesa o-- Categoria
+    Receita o-- Categoria
+    Usuario --> Notificacao
