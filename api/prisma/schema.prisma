@@ -22,6 +22,7 @@ model User {
   dataNascimento DateTime
   saldo          Float    @default(0.0)
   despesas Despesa[]
+  receitas Receita[]
 }
 
 model Despesa {
@@ -42,4 +43,21 @@ enum DespesaTipo {
   alimentacao
   lazer
   saude
+}
+model Receita {
+  id          Int          @id @default(autoincrement())
+  descricao   String
+  valor       Float
+  tipo        ReceitaTipo
+  data        DateTime
+  user        User         @relation(fields: [usuarioId], references: [id])
+  usuarioId   Int
+
+  @@map("receitas") // mapeia para a tabela 'receitas' no banco
+}
+
+enum ReceitaTipo {
+  salario
+  presente
+  outros
 }
