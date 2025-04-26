@@ -10,7 +10,6 @@ export class EstatisticasController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async obterEstatisticas(@Query('tipo') tipo: string, @User() user: any) {
-    // Se o tipo não for informado, podemos lançar uma exceção ou retornar um erro
     if (!tipo) {
       throw new Error('Tipo não informado. Use "despesas" ou "receitas".');
     }
