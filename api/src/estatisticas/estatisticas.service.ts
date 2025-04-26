@@ -5,15 +5,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class EstatisticasService {
   constructor(private prisma: PrismaService) {}
 
-  async calcularEstatisticas(usuarioId: number) {
+  async calcularEstatisticasDespesas(usuarioId: number) {
     const despesas = await this.prisma.despesa.findMany({
       where: { usuarioId },
     });
-  
+
     const total = despesas.reduce((soma, d) => soma + d.valor, 0);
-  
+
     const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
-  
+
     for (const despesa of despesas) {
       if (!porCategoria[despesa.tipo]) {
         porCategoria[despesa.tipo] = { valor: 0, quantidade: 0 };
@@ -21,16 +21,16 @@ export class EstatisticasService {
       porCategoria[despesa.tipo].valor += despesa.valor;
       porCategoria[despesa.tipo].quantidade += 1;
     }
-  
+
     const porcentagemPorCategoriaValor = total > 0
       ? Object.fromEntries(
           Object.entries(porCategoria).map(([tipo, { valor }]) => [
             tipo,
-            Number(((valor / total) * 100).toFixed(2)), 
+            Number(((valor / total) * 100).toFixed(2)),
           ])
         )
       : {};
-  
+
     const porcentagemPorCategoriaQuantidade = despesas.length > 0
       ? Object.fromEntries(
           Object.entries(porCategoria).map(([tipo, { quantidade }]) => [
@@ -39,12 +39,12 @@ export class EstatisticasService {
           ])
         )
       : {};
-  
+
     const categoriaMaisCara = Object.entries(porCategoria).reduce(
       (max, atual) => (atual[1].valor > max[1].valor ? atual : max),
       ['', { valor: 0, quantidade: 0 }]
     )[0];
-  
+
     return {
       total,
       porCategoria,
@@ -54,5 +54,54 @@ export class EstatisticasService {
       totalDespesas: despesas.length,
     };
   }
-  
+
+  async calcularEstatisticasReceitas(usuarioId: number) {
+    const receitas = await this.prisma.receita.findMany({
+      where: { usuarioId },
+    });
+
+    const total = receitas.reduce((soma, r) => soma + r.valor, 0);
+
+    const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
+
+    for (const receita of receitas) {
+      if (!porCategoria[receita.tipo]) {
+        porCategoria[receita.tipo] = { valor: 0, quantidade: 0 };
+      }
+      porCategoria[receita.tipo].valor += receita.valor;
+      porCategoria[receita.tipo].quantidade += 1;
+    }
+
+    const porcentagemPorCategoriaValor = total > 0
+      ? Object.fromEntries(
+          Object.entries(porCategoria).map(([tipo, { valor }]) => [
+            tipo,
+            Number(((valor / total) * 100).toFixed(2)),
+          ])
+        )
+      : {};
+
+    const porcentagemPorCategoriaQuantidade = receitas.length > 0
+      ? Object.fromEntries(
+          Object.entries(porCategoria).map(([tipo, { quantidade }]) => [
+            tipo,
+            Number(((quantidade / receitas.length) * 100).toFixed(2)),
+          ])
+        )
+      : {};
+
+    const categoriaMaisCara = Object.entries(porCategoria).reduce(
+      (max, atual) => (atual[1].valor > max[1].valor ? atual : max),
+      ['', { valor: 0, quantidade: 0 }]
+    )[0];
+
+    return {
+      total,
+      porCategoria,
+      porcentagemPorCategoriaValor,
+      porcentagemPorCategoriaQuantidade,
+      categoriaMaisRelevante: categoriaMaisCara || null,
+      totalReceitas: receitas.length,
+    };
+  }
 }
