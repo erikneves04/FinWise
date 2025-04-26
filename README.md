@@ -53,11 +53,11 @@
 
 4. Eu como usuário, gostaria de cadastrar minhas receitas no aplicativo.
    - Implementar a tela de cadastro de receitas [Erik Neves]
-   - Implementar as rotas de cadastro de receitas na API []
+   - Implementar as rotas de cadastro de receitas na API [Gabriella]
    - Implementar a tela de edição de receitas [Erik Neves]
-   - Implementar as rotas de edição de receitas na API []
+   - Implementar as rotas de edição de receitas na API [Gabriella]
    - Implementar a tela de listagem de receitas [Erik Neves]
-   - Implementar as rotas de listagem de receitas na API []
+   - Implementar as rotas de listagem de receitas na API [Gabriella]
   
 5. Eu como usuário, gostaria de cadastrar minhas despesas no aplicativo.
    - Implementar a tela de cadastro de despesa [Gabriel Prudente]
@@ -69,6 +69,9 @@
   
 6. Eu como usuário, gostaria de visualizar gráficos e estatísticas relacionadas ao meu balanço mensal de transações.
    - Implementar a rota de retornar estatísticas [Gabriella]
+### Diagrama de Classes
+
+O **Diagrama de Classes** abaixo apresenta a estrutura das principais entidades do FinWise, incluindo como elas se relacionam entre si.
 
 ```mermaid
 classDiagram
@@ -136,3 +139,12 @@ classDiagram
     Despesa o-- Categoria
     Receita o-- Categoria
     Usuario --> Notificacao
+```
+
+### Diagrama de Sequência
+
+O **Diagrama de Sequência** abaixo mostra a interação temporal entre os objetos do sistema em uma funcionalidade específica.
+
+![Diagrama](diagramaSequencia.jpeg)
+
+
