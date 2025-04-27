@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../services/routes';
 import LogoItem from '../../assets/svg/logo';
 
 import { Background } from '../../components/Background';

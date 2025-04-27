@@ -1,16 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
 export class EstatisticasService {
   constructor(private prisma: PrismaService) {}
 
   async calcularEstatisticasDespesas(usuarioId: number) {
+    const usuario = await this.prisma.user.findUnique({
+      where: { id: usuarioId },
+      select: { saldo: true },
+    });
+
+    if (!usuario) {
+      throw new Error('Usuário não encontrado');
+    }
+
     const despesas = await this.prisma.despesa.findMany({
       where: { usuarioId },
     });
 
-    const total = despesas.reduce((soma, d) => soma + d.valor, 0);
+    const valorTotalDespesas = despesas.reduce((soma, d) => soma + d.valor, 0);
 
     const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
 
@@ -22,11 +31,11 @@ export class EstatisticasService {
       porCategoria[despesa.tipo].quantidade += 1;
     }
 
-    const porcentagemPorCategoriaValor = total > 0
+    const porcentagemPorCategoriaValor = valorTotalDespesas > 0
       ? Object.fromEntries(
           Object.entries(porCategoria).map(([tipo, { valor }]) => [
             tipo,
-            Number(((valor / total) * 100).toFixed(2)),
+            Number(((valor / valorTotalDespesas) * 100).toFixed(2)),
           ])
         )
       : {};
@@ -46,7 +55,8 @@ export class EstatisticasService {
     )[0];
 
     return {
-      total,
+      valorTotalDespesas,
+      saldo: usuario.saldo, 
       porCategoria,
       porcentagemPorCategoriaValor,
       porcentagemPorCategoriaQuantidade,
@@ -56,11 +66,20 @@ export class EstatisticasService {
   }
 
   async calcularEstatisticasReceitas(usuarioId: number) {
+    const usuario = await this.prisma.user.findUnique({
+      where: { id: usuarioId },
+      select: { saldo: true },
+    });
+
+    if (!usuario) {
+      throw new Error('Usuário não encontrado');
+    }
+
     const receitas = await this.prisma.receita.findMany({
       where: { usuarioId },
     });
 
-    const total = receitas.reduce((soma, r) => soma + r.valor, 0);
+    const valorTotalReceitas = receitas.reduce((soma, r) => soma + r.valor, 0);
 
     const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
 
@@ -72,11 +91,11 @@ export class EstatisticasService {
       porCategoria[receita.tipo].quantidade += 1;
     }
 
-    const porcentagemPorCategoriaValor = total > 0
+    const porcentagemPorCategoriaValor = valorTotalReceitas > 0
       ? Object.fromEntries(
           Object.entries(porCategoria).map(([tipo, { valor }]) => [
             tipo,
-            Number(((valor / total) * 100).toFixed(2)),
+            Number(((valor / valorTotalReceitas) * 100).toFixed(2)),
           ])
         )
       : {};
@@ -96,7 +115,8 @@ export class EstatisticasService {
     )[0];
 
     return {
-      total,
+      valorTotalReceitas,
+      saldo: usuario.saldo, 
       porCategoria,
       porcentagemPorCategoriaValor,
       porcentagemPorCategoriaQuantidade,

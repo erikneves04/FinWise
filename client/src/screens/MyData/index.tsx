@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../services/routes';
 import LogoItem from '../../assets/svg/logo';
 
 import { Background } from '../../components/Background';
@@ -25,6 +25,17 @@ import { SubtitleBlack, SubtitleBlue, SubtitleGrey } from '../styles.Global';
 import { TextField } from '../../components/TextField';
 import { Modal } from '../../components/Modal';
 
+import {
+  GetUser,
+  GetUserData
+} from "../../services/requests/User/GetUser";
+
+import { Loading } from "../../components/Loading";
+import { handleApiError } from "../../utils/functions";
+import { MessageBalloon } from "../../components/MessageBallon";
+
+import { UpdateUser } from '../../services/requests/User/UpdateUser';
+
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "MyData"
@@ -35,24 +46,45 @@ type Props = {
 
 export default function MyData({ navigation }: Props) {
   const [data, setData] = useState({
-    name: "",
+    nome: "",
     email: "",
-    password: "",
-    cellNumber: "",
-    birthdate: "",
-    company: "",
   });
 
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [date, setDate] = useState("");
 
-  function updateRegisterData(newData: Partial<typeof data>) {
-    setData((prevData) => ({ ...prevData, ...newData }));
-  }
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+
+  const getUserFunction = async () => {
+    try {
+      setLoading(true);
+      const data = await GetUser();
+      if (data) {
+        setData(data);
+      }
+      setLoading(false);
+    } catch (err: any) {
+      const errorHandled = handleApiError(err);
+      setErrorMsg(
+        typeof errorHandled === "string"
+          ? errorHandled
+          : errorHandled.message || "Erro desconhecido"
+      );
+      setError(true);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUserFunction();
+  }, []);
 
   const onMyDataPress = async () => {
     try {
-      navigation.navigate("HomePage");
+      setLoading(true);
+      await UpdateUser(data);
+      navigation.navigate("EditData");
     } catch (err: any) {
 
     }
@@ -60,7 +92,8 @@ export default function MyData({ navigation }: Props) {
 
   return (
     <Background>
-      <Modal height='50'>
+      {loading && <Loading />}
+      <Modal height='50' width='90'>
         <MainView>
           <LogoItem height={120} />
 
@@ -69,19 +102,12 @@ export default function MyData({ navigation }: Props) {
           </TitleWrapper>
           <SubtitleWrapper>
             {/* <Icon name="user" size={17} color="#656565" /> */}
-            <TextBlack> Nome: xxxxxxxxxx </TextBlack>
+            <TextBlack> Nome: {data.nome} </TextBlack>
           </SubtitleWrapper>
           <SubtitleWrapper>
             {/* <Icon name="envelope" size={17} color="#656565" /> */}
-            <TextBlack> Email: xxxxxxxxxx </TextBlack>
+            <TextBlack> Email: {data.email} </TextBlack>
           </SubtitleWrapper>
-
-          {data.cellNumber && (
-            <SubtitleWrapper>
-              {/* <Icon name="phone" size={17} color="#656565" /> */}
-              <TextBlack> Celular: xxxxxxxxxx </TextBlack>
-            </SubtitleWrapper>
-          )}
 
           <ButtonWrapper>
             <NavigationButton
@@ -93,6 +119,15 @@ export default function MyData({ navigation }: Props) {
           </ButtonWrapper>
         </MainView>
       </Modal>
+      {error && (
+        <MessageBalloon
+          title="Atenção"
+          text={errorMsg}
+          handleConfirmButton={() => {
+            setError(false);
+          }}
+        />
+      )}
     </Background>
   );
 }

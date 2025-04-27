@@ -22,11 +22,15 @@ export class UsuarioService {
       throw new BadRequestException('E-mail já está em uso.');
     }
 
+    const dataNascimento = new Date(dto.dataNascimento);
+    dataNascimento.setHours(0, 0, 0, 0); // Zera hora, minuto, segundo e milissegundo
+
     const hashed = await bcrypt.hash(dto.senha, 10);
 
     return this.prisma.user.create({
       data: {
         ...dto,
+        dataNascimento,
         senha: hashed,
       },
     });
@@ -65,18 +69,18 @@ export class UsuarioService {
 
   async createExpense(id: number, dto: CreateDespesaDto): Promise<Despesa> {
     const usuario = await this.findOne(id);
-  
-    // Verificando se o tipo da despesa é válido
+
     if (!Object.values(DespesaTipo).includes(dto.tipo)) {
       throw new BadRequestException('Tipo de despesa inválido.');
     }
-    if (usuario.saldo < dto.valor) {
-      throw new BadRequestException('Saldo insuficiente para criar a despesa.');
-    }
+    
+    const data = new Date(dto.data);
+    data.setHours(0, 0, 0, 0); 
 
     const despesa = await this.prisma.despesa.create({
       data: {
         ...dto,
+        data: data,
         usuarioId: usuario.id,
       },
     });
@@ -91,7 +95,6 @@ export class UsuarioService {
     return despesa;
   }
   
-
   async getExpenses(@User() user: any): Promise<Despesa[]> {
     return this.prisma.despesa.findMany({
       where: { usuarioId: user.id },
@@ -127,11 +130,6 @@ export class UsuarioService {
     const diferenca = dto.valor - despesaAntiga.valor;
     const usuario = await this.findOne(user.id);
 
-    if (diferenca > 0 && usuario.saldo < diferenca) {
-      throw new BadRequestException('Saldo insuficiente para atualizar a despesa.');
-    }
-
-    // Atualiza o saldo conforme a diferença
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
@@ -160,7 +158,6 @@ export class UsuarioService {
       where: { id: despesaId },
     });
 
-    // Reembolsa o valor da despesa no saldo do usuário
     const usuario = await this.findOne(user.id);
     await this.prisma.user.update({
       where: { id: user.id },
@@ -169,7 +166,7 @@ export class UsuarioService {
       },
     });
 
-    return { message: 'Despesa excluída e valor reembolsado ao saldo.' };
+    return { message: 'Despesa excluída.' };
   }
 
   async addBalance(@User() user: any, valor: number) {
