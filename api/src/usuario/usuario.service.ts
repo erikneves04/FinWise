@@ -23,14 +23,19 @@ export class UsuarioService {
     }
 
     const dataNascimento = new Date(dto.dataNascimento);
-    dataNascimento.setHours(0, 0, 0, 0); // Zera hora, minuto, segundo e milissegundo
+    const utcDataNascimento = new Date(Date.UTC(
+      dataNascimento.getUTCFullYear(),
+      dataNascimento.getUTCMonth(),
+      dataNascimento.getUTCDate(),
+      0, 0, 0, 0 
+    ));
 
     const hashed = await bcrypt.hash(dto.senha, 10);
 
     return this.prisma.user.create({
       data: {
         ...dto,
-        dataNascimento,
+        dataNascimento: utcDataNascimento,
         senha: hashed,
       },
     });
@@ -54,11 +59,24 @@ export class UsuarioService {
 
   async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
     await this.findOne(id);
+  
+    if (updateUsuarioDto.dataNascimento) {
+      const dataNascimento = new Date(updateUsuarioDto.dataNascimento);
+      const utcDataNascimento = new Date(Date.UTC(
+        dataNascimento.getUTCFullYear(),
+        dataNascimento.getUTCMonth(),
+        dataNascimento.getUTCDate(),
+        0, 0, 0, 0 
+      ));
+      updateUsuarioDto.dataNascimento = utcDataNascimento;
+    }
+  
     return this.prisma.user.update({
       where: { id },
       data: updateUsuarioDto,
     });
   }
+  
 
   async remove(id: number) {
     await this.findOne(id);
@@ -75,12 +93,18 @@ export class UsuarioService {
     }
     
     const data = new Date(dto.data);
-    data.setHours(0, 0, 0, 0); 
-
+    const utcData = new Date(Date.UTC(
+      data.getUTCFullYear(),
+      data.getUTCMonth(),
+      data.getUTCDate(),
+      0, 0, 0, 0 
+    ));
+ 
+   
     const despesa = await this.prisma.despesa.create({
       data: {
         ...dto,
-        data: data,
+        data: utcData,
         usuarioId: usuario.id,
       },
     });
@@ -120,29 +144,42 @@ export class UsuarioService {
     const despesaAntiga = await this.prisma.despesa.findFirst({
       where: { usuarioId: user.id, id: despesaId },
     });
-
+  
     if (!despesaAntiga) {
       console.log("UsuarioID: " + user.id);
       console.log("DespesaID: " + despesaId);
       throw new NotFoundException('Despesa não encontrada para este usuário.');
     }
 
-    const diferenca = dto.valor - despesaAntiga.valor;
-    const usuario = await this.findOne(user.id);
-
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        saldo: usuario.saldo - diferenca,
-      },
-    });
-
-    // Atualiza a despesa
+    if (dto.valor !== undefined && dto.valor !== despesaAntiga.valor) {
+      const diferenca = dto.valor - despesaAntiga.valor;
+      const usuario = await this.findOne(user.id);
+  
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          saldo: usuario.saldo - diferenca,
+        },
+      });
+    }
+  
+    if (dto.data) {
+      const data = new Date(dto.data);
+      const utcData = new Date(Date.UTC(
+        data.getUTCFullYear(),
+        data.getUTCMonth(),
+        data.getUTCDate(),
+        0, 0, 0, 0 
+      ));
+      dto.data = utcData;
+    }
+  
     return this.prisma.despesa.update({
       where: { id: despesaId },
       data: dto,
     });
   }
+
 
   async deleteExpense(@User() user: any, despesaId: number) {
     const despesa = await this.prisma.despesa.findFirst({

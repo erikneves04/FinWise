@@ -1,0 +1,57 @@
+[33m80ee739[m[33m ([m[1;36mHEAD -> [m[1;32mfix/back[m[33m, [m[1;31morigin/fix/back[m[33m)[m Merge branch 'main' into fix/back
+[33ma644ed9[m fix:updates
+[33m5d341eb[m[33m ([m[1;32mmain[m[33m)[m Fix/back (#39)
+[33m991d6a2[m Feature/front/integracao-despesas (#38)
+[33m1bb34b9[m update: saldo total
+[33m0ac492d[m delete: remove celular do banco
+[33me95ffef[m Feature/front/validacao de usuario (#37)
+[33mbeec346[m fix: dateTime; restricao saldo
+[33m383de92[m Feature/front/conexao api/create user (#31)
+[33m0104759[m Update README.md (#36)
+[33m28d7837[m Feat/back/receitas (#35)
+[33mc794e32[m add uml sequencia (#33)
+[33mc848f7d[m Update README.md (#32)
+[33mea86846[m Update README.md (#34)
+[33m5ddd6db[m Feature/front/conexao api/create user (#30)
+[33ma2f2903[m Update README.md (#29)
+[33m91f57c6[m Feat/back/estatisticas (#27)
+[33mccdf5a7[m Feat/back/login logout (#26)
+[33mbecdf6d[m Update package.json (#28)
+[33m20c11eb[m saldo feito (#25)
+[33md6fe185[m Delete mysql-apt-config_0.8.29-1_all.deb.1 (#24)
+[33ma4bb001[m Delete mysql-apt-config_0.8.29-1_all.deb (#23)
+[33m13b409f[m Rotas de Usuario com Despesas (#22)
+[33m836d0ad[m Feature/front/edicao-remocao-receita-e-despesas (#20)
+[33md1207d8[m Feat/back/usuario (#19)
+[33mfa23ecf[m Delete tsconfig.json (#18)
+[33m67d01cd[m Feature/front/home page (#13)
+[33m9a94d05[m Delete back directory (#17)
+[33med8acf1[m Delete node_modules directory (#16)
+[33m29c1755[m Update .gitignore (#15)
+[33m45192b5[m Delete .env (#14)
+[33m277db30[m Feature/front/listagem de despesas (#12)
+[33m18945dd[m Feature/front/tela meus dados (#11)
+[33m78a1994[m Feature/front/tela de criação de despesa (#9)
+[33mc200534[m Delete package.json
+[33ma04e637[m Delete package-lock.json
+[33m3c8b8d6[m Feature/front/ajuste de telas (#8)
+[33m3414202[m Merge pull request #5 from erikneves04/feat/back/setup
+[33m1660b69[m[33m ([m[1;31morigin/feat/back/setup[m[33m)[m Merge branch 'main' into feat/back/setup
+[33mf3fb84a[m adicionar logo na tela de cadastro de receitas
+[33m8706ad2[m Fix/front/layout -receitas (#7)
+[33m5037449[m Feature/front/login (#6)
+[33m97176a5[m Feature/front/receita (#3)
+[33mc59271f[m update: testando prisma
+[33mc36c996[m feat: instalando prisma
+[33md399763[m[33m ([m[1;31morigin/nestjs[m[33m, [m[1;32mnestjs[m[33m)[m fix: nome pasta
+[33m1ea3f1a[m tasks-to-readme (#4)
+[33md950197[m Setup inicial do NestJS
+[33m3aa9381[m Adicionando diretório back como parte do repositório
+[33mb9f20ed[m Feature/front/telas e ajustes iniciais (#2)
+[33mbf5b807[m configuração inicial
+[33mc56bc1a[m feat: inicia e configura um expo app (#1)
+[33me333b19[m[33m ([m[1;31morigin/feat/back/setupEnviroment[m[33m)[m Update README.md
+[33mdcbe430[m Update README.md
+[33mdef8ecd[m Update README.md
+[33m467501f[m add initial readme data
+[33m8c0b35d[m Initial commit

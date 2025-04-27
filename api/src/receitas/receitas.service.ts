@@ -9,13 +9,17 @@ export class ReceitasService {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(userId: number, dto: CreateReceitaDto): Promise<Receita> {
-    const dataReceita = new Date(dto.data);
-    dataReceita.setHours(0, 0, 0, 0);
-
+    const data = new Date(dto.data);
+    const utcData = new Date(Date.UTC(
+      data.getUTCFullYear(),
+      data.getUTCMonth(),
+      data.getUTCDate(),
+      0, 0, 0, 0 
+    ));
     const receita = await this.prisma.receita.create({
       data: {
         ...dto,
-        data: dataReceita,
+        data: utcData,
         usuarioId: userId,
       },
     });
@@ -53,13 +57,14 @@ export class ReceitasService {
 
   async update(userId: number, receitaId: number, dto: UpdateReceitaDto): Promise<Receita> {
     const receitaAntiga = await this.findOne(userId, receitaId);
+  
     if (!receitaAntiga) {
       throw new NotFoundException('Receita não encontrada ou não pertence ao usuário.');
     }
-
-    const diferenca = dto.valor - receitaAntiga.valor;
-
-    if (diferenca !== 0) {
+  
+    if (dto.valor !== undefined && dto.valor !== receitaAntiga.valor) {
+      const diferenca = dto.valor - receitaAntiga.valor;
+  
       await this.prisma.user.update({
         where: { id: userId },
         data: {
@@ -67,12 +72,24 @@ export class ReceitasService {
         },
       });
     }
-
+  
+    if (dto.data) {
+      const data = new Date(dto.data);
+      const utcData = new Date(Date.UTC(
+        data.getUTCFullYear(),
+        data.getUTCMonth(),
+        data.getUTCDate(),
+        0, 0, 0, 0 
+      ));
+      dto.data = utcData;
+    }
+  
     return this.prisma.receita.update({
       where: { id: receitaId },
       data: dto,
     });
   }
+  
 
   async delete(userId: number, receitaId: number) {
     const receita = await this.findOne(userId, receitaId);
