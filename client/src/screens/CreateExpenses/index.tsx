@@ -28,6 +28,9 @@ import { NavigationButton } from '../../components/NavigationButton';
 import { ExpenseTypes } from '../../utils/types';
 
 import { CreateExpense, UpdateExpense, DeleteExpense } from '../../services/requests/Expense/ExpenseServices';
+import { Loading } from '../../components/Loading';
+import { handleApiError } from '../../utils/functions';
+import { MessageBalloon } from '../../components/MessageBallon';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -71,9 +74,10 @@ export default function RegisterExpense({ navigation }: Props) {
     return moment(date).format("DD/MM/YYYY");
   };
 
-  const [error, setError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [notSavedDataMsg, setNotSavedDataMsg] = useState<boolean>(false);
 
   const onCreatePress = async () => {
     if (!incomeData.name || !incomeData.value || !incomeData.date || !incomeData.type) {
@@ -97,16 +101,19 @@ export default function RegisterExpense({ navigation }: Props) {
   
       navigation.navigate("ExpenseList");
     } catch (err: any) {
-      console.error(err);
-      setErrorMsg("Erro ao salvar despesa. Tente novamente.");
+      const errorMessage = handleApiError(err);
+      setErrorMsg(errorMessage);
       setError(true);
+  
+      MessageBalloon(errorMessage);
     } finally {
       setLoading(false);
-    }
+    }  
   };
 
   return (
     <Background>
+      {loading && <Loading />}
       <Modal height='73'>
         <TitleWrapper>
           <HeaderView>

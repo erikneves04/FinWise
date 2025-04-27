@@ -1,7 +1,7 @@
 import { api } from "../../api";
 
 export interface ExpenseData {
-    id: number,
+    id: number | undefined,
     descricao: string,
     valor: number,
     tipo: string,
@@ -19,7 +19,7 @@ function ConvertValueToString(value: number): string {
 
 function ConvertObjectToBody(data:any): ExpenseData {
     return {
-        id: data.id,
+        id: undefined,
         descricao: data.name,
         valor: ConvertValue(data.value),
         tipo: 'alimentacao', //data.type,
