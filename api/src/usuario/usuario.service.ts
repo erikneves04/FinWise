@@ -35,7 +35,7 @@ export class UsuarioService {
     return this.prisma.user.create({
       data: {
         ...dto,
-        dataNascimento,
+        dataNascimento: utcDataNascimento,
         senha: hashed,
       },
     });
@@ -179,8 +179,7 @@ export class UsuarioService {
       data: dto,
     });
   }
-  
-  
+
 
   async deleteExpense(@User() user: any, despesaId: number) {
     const despesa = await this.prisma.despesa.findFirst({
