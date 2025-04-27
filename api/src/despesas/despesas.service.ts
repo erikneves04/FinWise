@@ -8,12 +8,14 @@ export class DespesasService {
   constructor(private prisma: PrismaService) {}
 
   async create(usuarioId: number, dto: CreateDespesaDto) {
+    const data = new Date(dto.data);
+    data.setHours(0, 0, 0, 0); 
     return this.prisma.despesa.create({
       data: {
         descricao: dto.descricao,
         valor: dto.valor,
         tipo: dto.tipo,
-        data: new Date(dto.data),
+        data: data,
         usuarioId: usuarioId,
       },
     });

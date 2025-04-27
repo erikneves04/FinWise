@@ -9,9 +9,13 @@ export class ReceitasService {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(userId: number, dto: CreateReceitaDto): Promise<Receita> {
+    const dataReceita = new Date(dto.data);
+    dataReceita.setHours(0, 0, 0, 0);
+
     const receita = await this.prisma.receita.create({
       data: {
         ...dto,
+        data: dataReceita,
         usuarioId: userId,
       },
     });
@@ -83,7 +87,7 @@ export class ReceitasService {
     await this.prisma.user.update({
       where: { id: userId },
       data: {
-        saldo: { decrement: receita.valor }, // diminui o saldo
+        saldo: { decrement: receita.valor }, 
       },
     });
 
