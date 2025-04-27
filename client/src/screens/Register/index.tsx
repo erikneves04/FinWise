@@ -73,7 +73,6 @@ export default function Register({ navigation }: Props) {
 
     try {
       setLoading(true);
-      console.log(data);
       await CreateUser(data);
       navigation.navigate("HomePage");
       setLoading(false);
