@@ -17,7 +17,6 @@ model User {
   id             Int      @id @default(autoincrement())
   nome           String
   email          String   @unique
-  celular        String
   senha          String
   dataNascimento DateTime
   saldo          Float    @default(0.0)
@@ -53,7 +52,7 @@ model Receita {
   user        User         @relation(fields: [usuarioId], references: [id])
   usuarioId   Int
 
-  @@map("receitas") // mapeia para a tabela 'receitas' no banco
+  @@map("receitas")
 }
 
 enum ReceitaTipo {
