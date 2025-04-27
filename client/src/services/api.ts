@@ -13,6 +13,11 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-export function SetHeaderToken (token: any) {
-  api.defaults.headers['Authorization'] = `Bearer ${token}`;
+export function setApiToken(token: string | null) {
+  if (token) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common['Authorization'];
+  }
 }
+

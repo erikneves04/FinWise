@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { GetUserData } from "../requests/User/GetUser";
-import { SetHeaderToken } from "../api";
+
+import { setApiToken } from "../api";
 
 type Props = {
   children: React.ReactNode;
@@ -40,7 +41,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     console.log('Token atualizado:', token);
-    SetHeaderToken(token)
+    setApiToken(token);
   }, [token]);
 
   return (
