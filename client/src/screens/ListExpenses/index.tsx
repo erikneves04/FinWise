@@ -12,7 +12,7 @@ import { Background } from "../../components/Background";
 import { Ionicons } from "@expo/vector-icons";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../../App";
+import { RootStackParamList } from "../../services/routes";
 import {
   HeaderView,
   TitleWrapper,
@@ -26,6 +26,10 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { ExpenseTypes } from '../../utils/types';
+
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -66,9 +70,12 @@ export default function ExpenseList({ navigation }: Props) {
     }
   };
 
-  useEffect(() => {
-    loadExpenses();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadExpenses();
+    }, [])
+  );
+  
 
   const handleDelete = async (id: number) => {
     setLoading(true);
@@ -76,7 +83,6 @@ export default function ExpenseList({ navigation }: Props) {
       await DeleteExpense(id);
       setExpenses((prev) => prev.filter((item) => item.id !== id));
       setShowModal(false);
-      alert("Despesa deletada com sucesso.");
     } catch (error) {
       console.error("Erro ao deletar despesa:", error);
       alert("Erro ao deletar a despesa.");
@@ -107,7 +113,7 @@ export default function ExpenseList({ navigation }: Props) {
       </BackgroundWrapper>
 
       {viewMode === "table" ? (
-        <ScrollView horizontal>
+        <ScrollView horizontal >
           <View>
             <View style={styles.tableHeader}>
               <Text style={{ color: "#fff", fontFamily: "Quicksand-Bold" }}>Nome</Text>
@@ -148,6 +154,7 @@ export default function ExpenseList({ navigation }: Props) {
               </View>
             </View>
           )}
+          contentContainerStyle={{ paddingBottom: 100 }} 
         />
       )}
 

@@ -17,7 +17,6 @@ import { Title } from "./style";
 
 import { inputMasks } from "../../utils/inputMasks";
 import { RootStackParamList } from "../../services/routes";
-import { useAuth } from "../../services/context/AuthContext";
 import { GetUser } from "../../services/requests/User/GetUser";
 import { handleApiError } from "../../utils/functions";
 import { Loading } from "../../components/Loading";
@@ -46,8 +45,6 @@ export default function EditData({ navigation, route }: Props) {
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const { token } = useAuth();
-
   function updateRegisterData(newLoginData: Partial<UpdateUserData>) {
    
     if (!data) return;
@@ -57,7 +54,7 @@ export default function EditData({ navigation, route }: Props) {
   const getUserFunction = async () => {
     try {
       setLoading(true);
-      const data = await GetUser(token!);
+      const data = await GetUser();
       if (data) {
         setData(data);
       }
