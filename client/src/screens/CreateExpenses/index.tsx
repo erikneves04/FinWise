@@ -27,6 +27,8 @@ import { formatInputDate, handleValueChange } from '../../utils/functions';
 import { NavigationButton } from '../../components/NavigationButton';
 import { ExpenseTypes } from '../../utils/types';
 
+import { CreateExpense, UpdateExpense, DeleteExpense } from '../../services/requests/Expense/ExpenseServices';
+
 const screenWidth = Dimensions.get("window").width;
 
 type ScreenNavigationProp = NativeStackNavigationProp<
@@ -45,7 +47,7 @@ export default function RegisterExpense({ navigation }: Props) {
   const isEditing = !!route.params?.expense;
 
   const [incomeData, setExpenseData] = useState({
-    id: "",
+    id: -1,
     name: "",
     value: "",
     date: "",
@@ -69,6 +71,10 @@ export default function RegisterExpense({ navigation }: Props) {
     return moment(date).format("DD/MM/YYYY");
   };
 
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const onCreatePress = async () => {
     if (!incomeData.name || !incomeData.value || !incomeData.date || !incomeData.type) {
       alert("Preencha todos os campos corretamente!");
@@ -80,15 +86,23 @@ export default function RegisterExpense({ navigation }: Props) {
       return;
     }
 
-    if (isEditing) {
-      alert("Edição acionada mas ainda não implementada!");
-      // TODO: lógica de edição
-    } else {
-      alert("Cadastro acionado mas ainda não implementado!");
-      // TODO: lógica de criação
+    try {
+      setLoading(true);
+  
+      if (isEditing) {
+        await UpdateExpense(incomeData.id, incomeData);
+      } else {
+        await CreateExpense(incomeData);
+      }
+  
+      navigation.navigate("ExpenseList");
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg("Erro ao salvar despesa. Tente novamente.");
+      setError(true);
+    } finally {
+      setLoading(false);
     }
-
-    navigation.navigate("ExpenseList");
   };
 
   return (
