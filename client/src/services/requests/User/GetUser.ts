@@ -1,12 +1,11 @@
 import { api } from "../../api";
-export interface GetUserData{
-  id: number;
-  name: string;
-  cellNumber: string;
+export interface GetUserData {
+  nome: string;
   email: string;
-  company: string;
-  role: string;
-  birthdate: string;
+  celular: string;
+  senha: string;
+  dataNascimento: string;
+  saldo: number;
 }
 
 export async function GetUser() {

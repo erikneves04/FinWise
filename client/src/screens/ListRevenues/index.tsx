@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   FlatList,
   Text,
@@ -36,6 +36,7 @@ import { GetRevenues, DeleteRevenue } from "../../services/requests/Revenue/Reve
 import { Loading } from '../../components/Loading';
 import { handleApiError } from '../../utils/functions';
 import { MessageBalloon } from '../../components/MessageBallon';
+import { useFocusEffect } from "@react-navigation/native";
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -70,9 +71,11 @@ export default function IncomeList({ navigation }: Props) {
     }
   };
 
-  useEffect(() => {
-    loadRevenues();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadRevenues();
+    }, [])
+  );
 
   const handleDelete = (id: string) => {
     setIncomes((prev) => prev.filter((item) => item.id !== id));
@@ -144,7 +147,8 @@ export default function IncomeList({ navigation }: Props) {
                 </Pressable>
               </View>
             </View>
-          )}          
+          )}       
+          contentContainerStyle={{ paddingBottom: 100 }}    
         />
       )}
 

@@ -35,6 +35,8 @@ import { handleApiError } from "../../utils/functions";
 import { MessageBalloon } from "../../components/MessageBallon";
 
 import { UpdateUser } from '../../services/requests/User/UpdateUser';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -76,9 +78,11 @@ export default function MyData({ navigation }: Props) {
     }
   };
 
-  useEffect(() => {
-    getUserFunction();
-  }, []);
+  useFocusEffect(
+      useCallback(() => {
+        getUserFunction();
+      }, [])
+    );
 
   const onMyDataPress = async () => {
     try {
