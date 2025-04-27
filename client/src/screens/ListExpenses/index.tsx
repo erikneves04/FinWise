@@ -43,20 +43,19 @@ type Props = {
 };
 
 export default function ExpenseList({ navigation }: Props) {
-  const [expenses, setExpenses] = useState<any[]>([]); // Agora está inicializado como array vazio
+  const [expenses, setExpenses] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState("table");
 
   const [selectedExpense, setSelectedExpense] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false); // Para exibir carregamento enquanto os dados estão sendo buscados
+  const [loading, setLoading] = useState(false);
 
-  // Função para carregar as despesas da API
   const loadExpenses = async () => {
     setLoading(true);
     try {
-      const data = await GetExpenses(); // Aqui você vai buscar os dados da API
+      const data = await GetExpenses();
       if (Array.isArray(data)) {
-        setExpenses(data); // Atualiza o estado com as despesas
+        setExpenses(data);
       } else {
         console.error("Dados inválidos recebidos:", data);
       }
@@ -68,23 +67,21 @@ export default function ExpenseList({ navigation }: Props) {
   };
 
   useEffect(() => {
-    loadExpenses(); // Carregar despesas quando o componente for montado
+    loadExpenses();
   }, []);
 
   const handleDelete = async (id: number) => {
-    setLoading(true); // Ativa o loading
+    setLoading(true);
     try {
-      // Chama a API para excluir a despesa
-      await DeleteExpense(id); // Supondo que DeleteExpense seja a função para deletar na API
-      // Após deletar da API, remove da lista local
+      await DeleteExpense(id);
       setExpenses((prev) => prev.filter((item) => item.id !== id));
-      setShowModal(false); // Fecha o modal de confirmação
+      setShowModal(false);
       alert("Despesa deletada com sucesso.");
     } catch (error) {
       console.error("Erro ao deletar despesa:", error);
       alert("Erro ao deletar a despesa.");
     } finally {
-      setLoading(false); // Desativa o loading
+      setLoading(false);
     }
   };
 

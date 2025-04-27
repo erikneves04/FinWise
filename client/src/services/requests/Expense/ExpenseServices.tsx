@@ -48,22 +48,15 @@ function ConvertBodyResponse(list: ExpenseData[]): any[] {
 
 export async function GetExpenses() {
     const res = await api.get<ExpenseData[]>(`/usuario/despesas`);
-    var result = ConvertBodyResponse(res.data)
-    return result;
+    return ConvertBodyResponse(res.data);
 }
 
 export async function CreateExpense(body: any) {
-    console.log("Pré: ")
-    console.log(body)
-    console.log("Pós: ")
-    console.log(ConvertObjectToBody(body))
     const res = await api.post(`/usuario/despesas`, ConvertObjectToBody(body));
-    
     return res.data;
 }
 
 export async function UpdateExpense(id:number, body: any) {
-    console.log(ConvertObjectToBody(body))
     const res = await api.patch(`/usuario/despesas/${id}`, ConvertObjectToBody(body));
     return res.data;
 }
