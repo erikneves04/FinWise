@@ -1,10 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../../../App';
 import LogoItem from '../../assets/svg/logo';
+import Spinner from "react-native-loading-spinner-overlay";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import { Background } from '../../components/Background';
 import {
@@ -12,15 +13,21 @@ import {
   TitleWrapper,
   ButtonWrapper,
   RegisterContainer,
-  SubtitleWrapper,
   MainView
 } from "./styles";
+
+import { LoginData, Login } from "../../services/requests/User/Login";
 
 import { NavigationButton } from '../../components/NavigationButton';
 import { inputMasks } from "../../utils/inputMasks";
 import { SubtitleBlue, SubtitleGrey, Title } from '../styles.Global';
 import { TextField } from '../../components/TextField';
 import { Modal } from '../../components/Modal';
+import { handleApiError } from '../../utils/functions';
+import { Loading } from '../../components/Loading';
+import { MessageBalloon } from '../../components/MessageBallon';
+import { useAuth } from '../../services/context/AuthContext';
+
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -30,28 +37,46 @@ type Props = {
   navigation: ScreenNavigationProp;
 };
 
-export default function Login({ navigation }: Props) {
-  const [data, setData] = useState({
-    name: "",
+export default function LoginScreen({ navigation }: Props) {
+  const [data, setData] = useState<LoginData>({
     email: "",
-    password: "",
-    cellNumber: "",
-    birthdate: "",
-    company: "",
+    senha: ""
   });
 
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [date, setDate] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string>(
+    "E-mail ou Senha incorretos."
+  );
 
-  function updateRegisterData(newData: Partial<typeof data>) {
-    setData((prevData) => ({ ...prevData, ...newData }));
+  const [error, setError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const { setIsSignedIn, setToken } = useAuth();
+
+  function updateLoginData(newLoginData: Partial<LoginData>) {
+    if (!data) return;
+    setData({ ...data, ...newLoginData });
   }
 
   const onLoginPress = async () => {
     try {
-      navigation.navigate("HomePage");
-    } catch (err: any) {
+      setIsLoading(true);
+      const response = await Login(data);
+      const token = response.access_token;
 
+      if (token) {
+        setToken(token);
+        setIsSignedIn(true);
+      } else {
+        throw new Error("Token inválido");
+      }
+
+      setIsLoading(false);
+    } catch (err: any) {
+      const errorMessage = handleApiError(err);
+      setErrorMsg(errorMessage.message || 'Erro desconhecido');
+      setError(true);
+      setIsLoading(false);
     }
   };
 
@@ -65,6 +90,7 @@ export default function Login({ navigation }: Props) {
 
   return (
     <Background>
+      {isLoading && <Loading />}
       <Modal height='60' borderRadius={3}>
         <MainView>
           <LogoItem height={120} />
@@ -80,7 +106,7 @@ export default function Login({ navigation }: Props) {
               placeholder="Digite aqui o seu e-mail"
               keyboardType="email-address"
               autoCapitalize="none"
-              onChange={(text) => updateRegisterData({ email: text })}
+              onChange={(text) => updateLoginData({ email: text })}
               value={data.email}
             />
           </TextFieldWrapper>
@@ -92,9 +118,20 @@ export default function Login({ navigation }: Props) {
               placeholder="Digite aqui a sua senha"
               secureTextEntry
               autoCapitalize="none"
-              onChange={(text) => updateRegisterData({ password: text })}
-              value={data.password}
+              onChange={(text) => updateLoginData({ senha: text })}
+              value={data.senha}
             />
+
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+              style={styles.showPasswordButton}
+            >
+              <FontAwesome
+                name={showPassword ? "eye-slash" : "eye"}
+                size={18}
+                color="#000"
+              />
+            </TouchableOpacity>
           </TextFieldWrapper>
 
           <ButtonWrapper>
@@ -104,6 +141,7 @@ export default function Login({ navigation }: Props) {
               buttonText="Entrar"
               action={onLoginPress}
             />
+            <Spinner visible={isLoading} />
           </ButtonWrapper>
           <RegisterContainer onPress={onRegisterPress}>
             <SubtitleGrey>Não tem conta?</SubtitleGrey>
@@ -111,7 +149,26 @@ export default function Login({ navigation }: Props) {
           </RegisterContainer>
         </MainView>
       </Modal>
+      {error && (
+        <MessageBalloon
+          title="Atenção"
+          text={errorMsg}
+          handleConfirmButton={() => {
+            setError(false);
+          }}
+        />
+      )}
     </Background >
   );
 }
+
+const styles = StyleSheet.create({
+  showPasswordButton: {
+    position: "absolute",
+    top: 36,
+    right: 15,
+    zIndex: 1,
+  },
+});
+
 
