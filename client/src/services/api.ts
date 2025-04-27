@@ -5,7 +5,7 @@ import Constants from "expo-constants";
 const { expoConfig } = Constants;
 
 const uri = `http://${expoConfig?.hostUri!.split(":").shift()}:3000`; 
-console.log("URI: ", uri);
+
 
 export const api = axios.create({
   baseURL: uri,
