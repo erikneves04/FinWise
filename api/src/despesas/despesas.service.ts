@@ -9,13 +9,19 @@ export class DespesasService {
 
   async create(usuarioId: number, dto: CreateDespesaDto) {
     const data = new Date(dto.data);
-    data.setHours(0, 0, 0, 0); 
+    const utcData = new Date(Date.UTC(
+      data.getUTCFullYear(),
+      data.getUTCMonth(),
+      data.getUTCDate(),
+      0, 0, 0, 0 
+    ));
+ 
     return this.prisma.despesa.create({
       data: {
         descricao: dto.descricao,
         valor: dto.valor,
         tipo: dto.tipo,
-        data: data,
+        data: utcData,
         usuarioId: usuarioId,
       },
     });
