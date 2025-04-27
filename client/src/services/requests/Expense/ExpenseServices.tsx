@@ -9,7 +9,7 @@ export interface ExpenseData {
 }
 
 function ConvertValue(strValue: string): number {
-    const formattedValue = strValue.replace(".", "s").replace(",", ".");
+    const formattedValue = strValue.replace(/\./g, "").replace(",", ".");
     return parseFloat(formattedValue);
 }
 
@@ -53,6 +53,9 @@ export async function GetExpenses() {
 }
 
 export async function CreateExpense(body: any) {
+    console.log("Pré: ")
+    console.log(body)
+    console.log("Pós: ")
     console.log(ConvertObjectToBody(body))
     const res = await api.post(`/usuario/despesas`, ConvertObjectToBody(body));
     
