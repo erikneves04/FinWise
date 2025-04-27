@@ -61,7 +61,7 @@ export async function UpdateRevenue(id:any, body: any) {
     return res.data;
 }
 
-export async function DeleteRevenue(id:number) {
+export async function DeleteRevenue(id:any) {
     const res = await api.delete(`/receitas/${id}`);
     return res.data;
 }
