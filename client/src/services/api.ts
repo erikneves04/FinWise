@@ -12,3 +12,7 @@ export const api = axios.create({
   //baseURL: "http://20.121.197.157:2030/api",
   withCredentials: true,
 });
+
+export function SetHeaderToken (token: any) {
+  api.defaults.headers['Authorization'] = `Bearer ${token}`;
+}
