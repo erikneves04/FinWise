@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../services/routes';
 import LogoItem from '../../assets/svg/logo';
 import Spinner from "react-native-loading-spinner-overlay";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
