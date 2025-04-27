@@ -27,6 +27,11 @@ import { formatInputDate, handleValueChange } from '../../utils/functions';
 import { NavigationButton } from '../../components/NavigationButton';
 import { ExpenseTypes } from '../../utils/types';
 
+import { CreateExpense, UpdateExpense } from '../../services/requests/Expense/ExpenseServices';
+import { Loading } from '../../components/Loading';
+import { handleApiError } from '../../utils/functions';
+import { MessageBalloon } from '../../components/MessageBallon';
+
 const screenWidth = Dimensions.get("window").width;
 
 type ScreenNavigationProp = NativeStackNavigationProp<
@@ -45,7 +50,7 @@ export default function RegisterExpense({ navigation }: Props) {
   const isEditing = !!route.params?.expense;
 
   const [incomeData, setExpenseData] = useState({
-    id: "",
+    id: -1,
     name: "",
     value: "",
     date: "",
@@ -69,6 +74,11 @@ export default function RegisterExpense({ navigation }: Props) {
     return moment(date).format("DD/MM/YYYY");
   };
 
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [notSavedDataMsg, setNotSavedDataMsg] = useState<boolean>(false);
+
   const onCreatePress = async () => {
     if (!incomeData.name || !incomeData.value || !incomeData.date || !incomeData.type) {
       alert("Preencha todos os campos corretamente!");
@@ -80,19 +90,30 @@ export default function RegisterExpense({ navigation }: Props) {
       return;
     }
 
-    if (isEditing) {
-      alert("Edição acionada mas ainda não implementada!");
-      // TODO: lógica de edição
-    } else {
-      alert("Cadastro acionado mas ainda não implementado!");
-      // TODO: lógica de criação
-    }
-
-    navigation.navigate("ExpenseList");
+    try {
+      setLoading(true);
+  
+      if (isEditing) {
+        await UpdateExpense(incomeData.id, incomeData);
+      } else {
+        await CreateExpense(incomeData);
+      }
+  
+      navigation.navigate("ExpenseList");
+    } catch (err: any) {
+      const errorMessage = handleApiError(err);
+      setErrorMsg(errorMessage);
+      setError(true);
+  
+      MessageBalloon(errorMessage);
+    } finally {
+      setLoading(false);
+    }  
   };
 
   return (
     <Background>
+      {loading && <Loading />}
       <Modal height='73'>
         <TitleWrapper>
           <HeaderView>
