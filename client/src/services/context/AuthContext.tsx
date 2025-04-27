@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { GetUserData } from "../requests/User/GetUser";
+import { SetHeaderToken } from "../api";
 
 import { setApiToken } from "../api";
 

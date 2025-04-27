@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FlatList,
   Text,
@@ -32,12 +32,10 @@ import {
 
 const screenWidth = Dimensions.get("window").width;
 
-// Dados de exemplo
-const incomesMock = [
-  { id: "1", name: "Salário", value: "3.500,00", date: "01/03/2025", type: RevenueTypes[0] },
-  { id: "2", name: "Freelance", value: "500,00", date: "05/03/2025", type: RevenueTypes[3] },
-  { id: "3", name: "Investimentos", value: "1.200,00", date: "10/03/2025", type: RevenueTypes[4] },
-];
+import { GetRevenues, DeleteRevenue } from "../../services/requests/Revenue/RevenueServices";
+import { Loading } from '../../components/Loading';
+import { handleApiError } from '../../utils/functions';
+import { MessageBalloon } from '../../components/MessageBallon';
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -49,16 +47,38 @@ type Props = {
 };
 
 export default function IncomeList({ navigation }: Props) {
-  const [incomes, setIncomes] = useState(incomesMock);
+  const [incomes, setIncomes] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState("table");
+
   const [selectedIncome, setSelectedIncome] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const loadRevenues = async () => {
+    setLoading(true);
+    try {
+      const data = await GetRevenues();
+      if (Array.isArray(data)) {
+        setIncomes(data);
+      } else {
+        console.error("Dados inválidos recebidos:", data);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar despesas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadRevenues();
+  }, []);
 
   const handleDelete = (id: string) => {
     setIncomes((prev) => prev.filter((item) => item.id !== id));
     setShowModal(false);
 
-    alert('Delete acionado mas a ação ainda não foi implementada.')
+    DeleteRevenue(id)
   };
 
   const confirmDelete = (income: any) => {
@@ -72,6 +92,7 @@ export default function IncomeList({ navigation }: Props) {
 
   return (
     <Background>
+      {loading && <Loading />}
       <BackgroundWrapper>
         <TitleWrapper>
           <HeaderView>
@@ -90,9 +111,15 @@ export default function IncomeList({ navigation }: Props) {
               <Text style={{ color: "#fff", fontFamily: "Quicksand-Bold" }}>Data</Text>
               <Text style={{ color: "#fff", fontFamily: "Quicksand-Bold" }}>Tipo</Text>
             </View>
-            <TableRow name={"Salário"} value={"3.500,00"} date={"01/03/2025"} type={"Fixo"} />
-            <TableRow name={"Freelance"} value={"500,00"} date={"05/03/2025"} type={"Bônus"} />
-            <TableRow name={"Investimentos"} value={"1.200,00"} date={"10/03/2025"} type={"Outros"} />
+            {incomes.map((item) => (
+              <TableRow
+                key={item.id}
+                name={item.name}
+                value={item.value}
+                date={item.date}
+                type={item.type}
+              />
+            ))}
           </View>
         </ScrollView>
       ) : (

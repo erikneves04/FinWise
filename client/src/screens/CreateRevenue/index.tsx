@@ -26,6 +26,11 @@ import { formatInputDate, handleValueChange } from '../../utils/functions';
 import { NavigationButton } from '../../components/NavigationButton';
 import { RevenueTypes } from '../../utils/types';
 
+import { CreateRevenue, UpdateRevenue } from '../../services/requests/Revenue/RevenueServices';
+import { Loading } from '../../components/Loading';
+import { handleApiError } from '../../utils/functions';
+import { MessageBalloon } from '../../components/MessageBallon';
+
 const screenWidth = Dimensions.get("window").width;
 
 type ScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, "RegisterIncome">;
@@ -69,7 +74,12 @@ export default function RegisterIncome({ navigation, route }: Props) {
     setIncomeData({ ...incomeData, ...newData });
   };
 
-  const onSubmit = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [notSavedDataMsg, setNotSavedDataMsg] = useState<boolean>(false);
+
+  const onSubmit = async () => {
     if (!incomeData.name || !incomeData.value || !incomeData.date || !incomeData.type) {
       alert("Preencha todos os campos corretamente!");
       return;
@@ -80,19 +90,30 @@ export default function RegisterIncome({ navigation, route }: Props) {
       return;
     }
 
-    if (isEditMode) {
-      // TODO: Lógica para editar
-      alert("Botão de edição pressionado, mas a rota ainda não foi implementada!");
-    } else {
-      // TODO: Lógica para cadastrar
-      alert("Botão de cadastro pressionado, mas a rota ainda não foi implementada!");
-    }
-
-    navigation.navigate("IncomeList");
+    try {
+      setLoading(true);
+  
+      if (isEditMode) {
+        await UpdateRevenue(incomeData.id, incomeData);
+      } else {
+        await CreateRevenue(incomeData);
+      }
+  
+      navigation.navigate("IncomeList");
+    } catch (err: any) {
+      const errorMessage = handleApiError(err);
+      setErrorMsg(errorMessage);
+      setError(true);
+  
+      MessageBalloon(errorMessage);
+    } finally {
+      setLoading(false);
+    }  
   };
 
   return (
     <Background>
+      {loading && <Loading />}
       <Modal height='73'>
         <TitleWrapper>
           <HeaderView>
