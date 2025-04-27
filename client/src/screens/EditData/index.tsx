@@ -1,5 +1,5 @@
-import React, {  useState } from "react";
-import { View} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 
 import LogoItem from "../../assets/svg/logo";
 
@@ -16,6 +16,13 @@ import { TextFieldWrapper } from "../Login/styles";
 import { Title } from "./style";
 
 import { inputMasks } from "../../utils/inputMasks";
+import { RootStackParamList } from "../../services/routes";
+import { useAuth } from "../../services/context/AuthContext";
+import { GetUser } from "../../services/requests/User/GetUser";
+import { handleApiError } from "../../utils/functions";
+import { Loading } from "../../components/Loading";
+import { MessageBalloon } from "../../components/MessageBallon";
+import { UpdateUser, UpdateUserData } from "../../services/requests/User/UpdateUser";
 
 type ScreenRouteProp = RouteProp<RootStackParamList, "EditData">;
 
@@ -30,71 +37,93 @@ type Props = {
 };
 
 export default function EditData({ navigation, route }: Props) {
-  const [data, setData] = useState({
-    name: "",
+  const [data, setData] = useState<UpdateUserData>({
+    nome: "",
     email: "",
-    password: "",
-    cellNumber: "",
-    birthdate: "",
-    company: "",
   });
 
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [date, setDate] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
-  function updateRegisterData(newData: Partial<typeof data>) {
-    setData((prevData) => ({ ...prevData, ...newData }));
+  const { token } = useAuth();
+
+  function updateRegisterData(newLoginData: Partial<UpdateUserData>) {
+   
+    if (!data) return;
+    setData({ ...data, ...newLoginData });
   }
 
+  const getUserFunction = async () => {
+    try {
+      setLoading(true);
+      const data = await GetUser(token!);
+      if (data) {
+        setData(data);
+      }
+      setLoading(false);
+    } catch (err: any) {
+      const errorHandled = handleApiError(err);
+      setErrorMsg(
+        typeof errorHandled === "string"
+          ? errorHandled
+          : errorHandled.message || "Erro desconhecido"
+      );
+      setError(true);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUserFunction();
+  }, []);
 
   const onUpdatePress = async () => {
     try {
-      navigation.navigate("ConfirmRegister");
+      setLoading(true);
+      console.log(data);
+      await UpdateUser(data); 
+      setLoading(false);
+      navigation.navigate("MyData");
     } catch (err: any) {
-
+      setLoading(false);
+      const errorHandled = handleApiError(err);
+      setErrorMsg(
+        typeof errorHandled === "string"
+          ? errorHandled
+          : errorHandled.message || "Erro desconhecido"
+      );
+      setError(true);
     }
   };
 
   return (
     <Background>
-      <Modal height="63">
-        <LogoItem height={120}/>
+      {loading && <Loading />}
+      <Modal height="55">
+        <LogoItem height={120} />
         {/* <Divider /> */}
         <Title>Meus Dados</Title>
         <View>
           <TextFieldWrapper>
             <TextField
               placeholder="Digite aqui o seu nome completo"
-              value={""}
-              onChange={(text) => updateRegisterData({ name: text })}
+              onChange={(text) => updateRegisterData({ nome: text })}
               fontSize={14}
               editable
-              label="Nome Completo"
+              label="Nome"
+              value={data.nome}
             />
           </TextFieldWrapper>
 
           <TextFieldWrapper>
             <TextField
-              keyboardType="numeric"
-              placeholder="Digite aqui o seu numero de telefone"
-              value={""}
-              onChange={(text) => updateRegisterData({ cellNumber: text })}
+              placeholder="Digite aqui o seu email completo"
+              onChange={(text) => updateRegisterData({ email: text })}
               fontSize={14}
               editable
-              mask={inputMasks.phone}
-              label="Telefone"
-            />
-          </TextFieldWrapper>
-
-          <TextFieldWrapper>
-            <TextField
-              keyboardType="numeric"
-              placeholder="Digite aqui a sua data de nascimento"
-              fontSize={14}
-              value={""}
-              onChange={(text) => updateRegisterData({ birthdate: text })}
-              editable
-              label="Data de nascimento"
+              label="Email"
+              value={data.email}
             />
           </TextFieldWrapper>
         </View>
@@ -105,6 +134,15 @@ export default function EditData({ navigation, route }: Props) {
           height={35}
         />
       </Modal>
+      {error && (
+        <MessageBalloon
+          title="Atenção"
+          text={errorMsg}
+          handleConfirmButton={() => {
+            setError(false);
+          }}
+        />
+      )}
     </Background>
   );
 }

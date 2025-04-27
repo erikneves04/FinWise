@@ -14,7 +14,7 @@ export const TitleWrapper = styled.View`
 export const SubtitleWrapper = styled.View`
   margin-top: ${hp(1)}px;
   margin-bottom: ${hp(1.5)}px;
-  width: ${wp(70)}px;
+  width: ${wp(85)}px;
   flex-direction: row;
   justify-content: center;
 `;
@@ -50,12 +50,13 @@ export const MainView = styled.View`
 
 export const TextBlack = styled.Text`
   color: black;
-  font-size: ${RFValue(17, hp(100))}px;
+  font-size: ${RFValue(15, hp(100))}px;
+  font-family: "Quicksand-Medium";
   color: #1A1A1A;
 `;
 
 export const Title = styled.Text`
   font-size: ${RFValue(24, hp(100))}px;
   color: #000;
-  font-family: "SemiBold";
+  font-family: "Quicksand-Medium";
 `;
