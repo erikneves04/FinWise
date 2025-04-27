@@ -97,7 +97,7 @@ export function TextField({
           <MaskInput
             value={value}
             placeholder={placeholder}
-            style={styles.inputStyle}
+            style={[styles.inputStyle, { textAlign: "left", textAlignVertical: "center" }]}
             onChangeText={onChange}
             secureTextEntry={secureTextEntry}
             autoCapitalize={autoCapitalize}
@@ -108,7 +108,8 @@ export function TextField({
             maxLength={maxLength}
             editable={editable}
             multiline={multiline}
-            scrollEnabled={true}
+            scrollEnabled={!multiline}
+            numberOfLines={1}
           />
         )}
       </DynamicInputView>
@@ -126,12 +127,12 @@ export function TextField({
                 selectedDate.getMonth(),
                 selectedDate.getDate()
               );
-          
+
               const formattedDate = localDate.toISOString().split("T")[0];
               onChange(formattedDate, formattedDate);
             }
-          }}         
-          
+          }}
+
         />
       )}
     </View>

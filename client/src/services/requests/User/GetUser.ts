@@ -1,5 +1,4 @@
 import { api } from "../../api";
-
 export interface GetUserData{
   id: number;
   name: string;
@@ -11,6 +10,6 @@ export interface GetUserData{
 }
 
 export async function GetUser() {
-  const res = await api.get(`usuario`);
+  const res = await api.get(`/usuario`);
   return res.data;
 }
