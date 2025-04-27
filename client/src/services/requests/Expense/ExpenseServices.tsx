@@ -9,12 +9,21 @@ export interface ExpenseData {
 }
 
 function ConvertValue(strValue: string): number {
-    const formattedValue = strValue.replace(",", ".");
+    const formattedValue = strValue.replace(".", "s").replace(",", ".");
     return parseFloat(formattedValue);
 }
 
 function ConvertValueToString(value: number): string {
     return value.toFixed(2).replace(".", ",");
+}
+
+function formatDate(data: string): string {
+    const dateParts = data.split('T')[0].split('-');
+    const day = dateParts[2].padStart(2, '0');
+    const month = dateParts[1].padStart(2, '0');
+    const year = dateParts[0];
+
+    return `${day}/${month}/${year}`;
 }
 
 function ConvertObjectToBody(data:any): ExpenseData {
@@ -33,13 +42,14 @@ function ConvertBodyResponse(list: ExpenseData[]): any[] {
         name: item.descricao,
         value: ConvertValueToString(item.valor),
         type: item.tipo,
-        date: item.data
+        date: formatDate(item.data)
     }));
 }
 
 export async function GetExpenses() {
     const res = await api.get<ExpenseData[]>(`/usuario/despesas`);
-    return ConvertBodyResponse(res.data);
+    var result = ConvertBodyResponse(res.data)
+    return result;
 }
 
 export async function CreateExpense(body: any) {
@@ -50,6 +60,7 @@ export async function CreateExpense(body: any) {
 }
 
 export async function UpdateExpense(id:number, body: any) {
+    console.log(ConvertObjectToBody(body))
     const res = await api.patch(`/usuario/despesas/${id}`, ConvertObjectToBody(body));
     return res.data;
 }

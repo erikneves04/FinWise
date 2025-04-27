@@ -27,7 +27,7 @@ import { formatInputDate, handleValueChange } from '../../utils/functions';
 import { NavigationButton } from '../../components/NavigationButton';
 import { ExpenseTypes } from '../../utils/types';
 
-import { CreateExpense, UpdateExpense, DeleteExpense } from '../../services/requests/Expense/ExpenseServices';
+import { CreateExpense, UpdateExpense } from '../../services/requests/Expense/ExpenseServices';
 import { Loading } from '../../components/Loading';
 import { handleApiError } from '../../utils/functions';
 import { MessageBalloon } from '../../components/MessageBallon';

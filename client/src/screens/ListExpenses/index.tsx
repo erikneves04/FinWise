@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FlatList,
   Text,
@@ -29,12 +29,10 @@ import { ExpenseTypes } from '../../utils/types';
 
 const screenWidth = Dimensions.get("window").width;
 
-// Dados de exemplo
-const expensesMock = [
-  { id: "1", name: "Mercado", value: "1.500,00", date: "01/03/2025", type: ExpenseTypes[0] },
-  { id: "2", name: "Gasolina", value: "750,00", date: "05/03/2025", type: ExpenseTypes[2] },
-  { id: "3", name: "Financiamento do carro", value: "1.200,00", date: "10/03/2025", type: ExpenseTypes[4] },
-];
+import { GetExpenses, DeleteExpense } from '../../services/requests/Expense/ExpenseServices';
+import { Loading } from '../../components/Loading';
+import { handleApiError } from '../../utils/functions';
+import { MessageBalloon } from '../../components/MessageBallon';
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -45,16 +43,49 @@ type Props = {
 };
 
 export default function ExpenseList({ navigation }: Props) {
-  const [expenses, setExpenses] = useState(expensesMock);
+  const [expenses, setExpenses] = useState<any[]>([]); // Agora está inicializado como array vazio
   const [viewMode, setViewMode] = useState("table");
 
   const [selectedExpense, setSelectedExpense] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false); // Para exibir carregamento enquanto os dados estão sendo buscados
 
-  const handleDelete = (id: string) => {
-    setExpenses((prev) => prev.filter((item) => item.id !== id));
-    setShowModal(false);
-    alert("Delete acionado mas a ação ainda não foi implementada.");
+  // Função para carregar as despesas da API
+  const loadExpenses = async () => {
+    setLoading(true);
+    try {
+      const data = await GetExpenses(); // Aqui você vai buscar os dados da API
+      if (Array.isArray(data)) {
+        setExpenses(data); // Atualiza o estado com as despesas
+      } else {
+        console.error("Dados inválidos recebidos:", data);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar despesas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadExpenses(); // Carregar despesas quando o componente for montado
+  }, []);
+
+  const handleDelete = async (id: number) => {
+    setLoading(true); // Ativa o loading
+    try {
+      // Chama a API para excluir a despesa
+      await DeleteExpense(id); // Supondo que DeleteExpense seja a função para deletar na API
+      // Após deletar da API, remove da lista local
+      setExpenses((prev) => prev.filter((item) => item.id !== id));
+      setShowModal(false); // Fecha o modal de confirmação
+      alert("Despesa deletada com sucesso.");
+    } catch (error) {
+      console.error("Erro ao deletar despesa:", error);
+      alert("Erro ao deletar a despesa.");
+    } finally {
+      setLoading(false); // Desativa o loading
+    }
   };
 
   const confirmDelete = (expense: any) => {
@@ -68,6 +99,7 @@ export default function ExpenseList({ navigation }: Props) {
 
   return (
     <Background>
+      {loading && <Loading />}
       <BackgroundWrapper>
         <TitleWrapper>
           <HeaderView>
