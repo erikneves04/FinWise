@@ -1,8 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
 import { useState, useEffect } from 'react';
-import Svg, { Line, Polyline } from 'react-native-svg';
-
+import Svg, { G, Path, Polyline } from 'react-native-svg';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../../../App';
 
@@ -19,7 +18,7 @@ type Props = {
   navigation: ScreenNavigationProp;
 };
 
-// Simulando resposta da API
+// Simulando resposta da API para receitas/despesas
 const apiData = [
   { referencia: '2025-04-01', valorTotalReceitas: 1000, valorTotalDespesas: 500 },
   { referencia: '2025-04-02', valorTotalReceitas: 1500, valorTotalDespesas: 700 },
@@ -28,35 +27,21 @@ const apiData = [
   { referencia: '2025-04-05', valorTotalReceitas: 1700, valorTotalDespesas: 900 },
 ];
 
+// Simulando resposta da API para categorias (gráfico de pizza)
+const pieData = [
+  { categoria: 'AAA', valorTotal: 500 },
+  { categoria: 'BBB', valorTotal: 300 },
+  { categoria: 'CCC', valorTotal: 200 },
+];
+
 export default function HomePage({ navigation }: Props) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [graphData, setGraphData] = useState(apiData);
+  const [pieGraphData, setPieGraphData] = useState(pieData);
 
   const screenWidth = Dimensions.get('window').width - 40; // padding horizontal
   const graphHeight = 150;
-
-  const daysInMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  };
-
-  const generateCompleteGraphData = () => {
-    const days = daysInMonth(currentMonth);
-    const dataMap = new Map(graphData.map(item => [new Date(item.referencia).getDate(), item]));
-
-    const completeData = Array.from({ length: days }, (_, i) => {
-      const day = i + 1;
-      const data = dataMap.get(day);
-      return {
-        referencia: new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).toISOString().split('T')[0],
-        valorTotalReceitas: data ? data.valorTotalReceitas : 0,
-        valorTotalDespesas: data ? data.valorTotalDespesas : 0,
-      };
-    });
-
-    return completeData;
-  };
-
-  const completeGraphData = generateCompleteGraphData();
+  const pieGraphHeight = 150;
 
   const changeMonth = (amount: number) => {
     const newDate = new Date(currentMonth);
@@ -66,21 +51,40 @@ export default function HomePage({ navigation }: Props) {
   };
 
   const maxValue = Math.max(
-    ...completeGraphData.map(item => Math.max(item.valorTotalReceitas, item.valorTotalDespesas)),
-    1 // evitar divisão por 0
+    ...graphData.map(item => Math.max(item.valorTotalReceitas, item.valorTotalDespesas))
   );
 
-  const receitaPoints = completeGraphData.map((item, index) => {
-    const x = (index / (completeGraphData.length - 1)) * screenWidth;
+  const receitaPoints = graphData.map((item, index) => {
+    const x = (index / (graphData.length - 1)) * screenWidth;
     const y = graphHeight - (item.valorTotalReceitas / maxValue) * graphHeight;
     return `${x},${y}`;
   }).join(' ');
 
-  const despesaPoints = completeGraphData.map((item, index) => {
-    const x = (index / (completeGraphData.length - 1)) * screenWidth;
+  const despesaPoints = graphData.map((item, index) => {
+    const x = (index / (graphData.length - 1)) * screenWidth;
     const y = graphHeight - (item.valorTotalDespesas / maxValue) * graphHeight;
     return `${x},${y}`;
   }).join(' ');
+
+  // Cálculo para o gráfico de pizza
+  const totalValue = pieGraphData.reduce((sum, item) => sum + item.valorTotal, 0);
+  let startAngle = 0;
+
+  const pieSegments = pieGraphData.map(item => {
+    const value = (item.valorTotal / totalValue) * 360;
+    const endAngle = startAngle + value;
+    const largeArcFlag = value > 180 ? 1 : 0;
+    const x1 = Math.cos((startAngle - 90) * (Math.PI / 180)) * pieGraphHeight / 2 + pieGraphHeight / 2;
+    const y1 = Math.sin((startAngle - 90) * (Math.PI / 180)) * pieGraphHeight / 2 + pieGraphHeight / 2;
+    const x2 = Math.cos((endAngle - 90) * (Math.PI / 180)) * pieGraphHeight / 2 + pieGraphHeight / 2;
+    const y2 = Math.sin((endAngle - 90) * (Math.PI / 180)) * pieGraphHeight / 2 + pieGraphHeight / 2;
+
+    startAngle = endAngle;
+
+    const d = `M${pieGraphHeight / 2},${pieGraphHeight / 2} L${x1},${y1} A${pieGraphHeight / 2},${pieGraphHeight / 2} 0 ${largeArcFlag} 1 ${x2},${y2} Z`;
+    
+    return { path: d, categoria: item.categoria, valor: item.valorTotal };
+  });
 
   return (
     <Background>
@@ -102,7 +106,7 @@ export default function HomePage({ navigation }: Props) {
             </TouchableOpacity>
           </View>
 
-          {/* Gráfico */}
+          {/* Gráfico de Linhas (Receitas e Despesas) */}
           <View style={styles.graphContainer}>
             <Svg height={graphHeight} width={screenWidth}>
               {/* Linha Receitas */}
@@ -127,6 +131,27 @@ export default function HomePage({ navigation }: Props) {
 
               <View style={[styles.legendDot, { backgroundColor: 'red', marginLeft: 20 }]} />
               <Text style={styles.legendText}>Despesas</Text>
+            </View>
+          </View>
+
+          {/* Gráfico de Pizza */}
+          <View style={styles.graphContainer}>
+            <Svg height={pieGraphHeight} width={pieGraphHeight}>
+              {pieSegments.map((segment, index) => (
+                <G key={index}>
+                  <Path d={segment.path} fill={`hsl(${(index * 360) / pieSegments.length}, 100%, 50%)`} />
+                </G>
+              ))}
+            </Svg>
+
+            {/* Legenda */}
+            <View style={styles.legendContainer}>
+              {pieSegments.map((segment, index) => (
+                <View key={index} style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: `hsl(${(index * 360) / pieSegments.length}, 100%, 50%)` }]} />
+                  <Text style={styles.legendText}>{segment.categoria} ({segment.valor})</Text>
+                </View>
+              ))}
             </View>
           </View>
         </View>
@@ -166,11 +191,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
+    marginBottom: 20,
   },
   legendContainer: {
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   legendDot: {
     width: 10,
