@@ -4,8 +4,8 @@ import Constants from "expo-constants";
 
 const { expoConfig } = Constants;
 
-const uri = `http://${expoConfig?.hostUri!.split(":").shift()}:3000`; 
-// const uri = 'https://finwise-production-79cf.up.railway.app'
+// const uri = `http://${expoConfig?.hostUri!.split(":").shift()}:3000`; 
+const uri = 'https://finwise-production-79cf.up.railway.app'
 
 export const api = axios.create({
   baseURL: uri,
