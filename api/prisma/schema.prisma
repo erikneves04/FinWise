@@ -28,7 +28,7 @@ model Despesa {
   id          Int          @id @default(autoincrement())
   descricao   String
   valor       Float
-  tipo        DespesaTipo
+  tipo        String
   data        DateTime
   user         User         @relation(fields: [usuarioId], references: [id])
   usuarioId   Int
@@ -36,27 +36,14 @@ model Despesa {
   @@map("despesas")
 }
 
-enum DespesaTipo {
-  fixo
-  conta
-  alimentacao
-  lazer
-  saude
-}
 model Receita {
   id          Int          @id @default(autoincrement())
   descricao   String
   valor       Float
-  tipo        ReceitaTipo
+  tipo        String
   data        DateTime
   user        User         @relation(fields: [usuarioId], references: [id])
   usuarioId   Int
 
   @@map("receitas")
-}
-
-enum ReceitaTipo {
-  salario
-  presente
-  outros
 }
