@@ -131,14 +131,15 @@ classDiagram
         +gerenciarMembros()
     }
 
-    Usuario o-- Conta
-    Conta o-- Receita
-    Conta o-- Despesa
-    Usuario o-- Cartao
-    Usuario o-- ContaFamiliar
-    Despesa o-- Categoria
-    Receita o-- Categoria
-    Usuario --> Notificacao
+    Usuario "1" o-- "1" Conta
+    Conta "1" o-- "0..*" Receita
+    Conta "1" o-- "0..*" Despesa
+    Usuario "1" o-- "0..*" Cartao
+    Usuario "1" o-- "0..1" ContaFamiliar
+    Despesa "0..*" o-- "1" Categoria
+    Receita "0..*" o-- "1" Categoria
+    Usuario "1" --> "0..*" Notificacao
+
 ```
 
 ### Diagrama de Sequência
