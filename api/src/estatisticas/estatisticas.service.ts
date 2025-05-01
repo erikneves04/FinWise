@@ -1,127 +1,75 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class EstatisticasService {
   constructor(private prisma: PrismaService) {}
 
-  async calcularEstatisticasDespesas(usuarioId: number) {
-    const usuario = await this.prisma.user.findUnique({
-      where: { id: usuarioId },
-      select: { saldo: true },
-    });
-
-    if (!usuario) {
-      throw new Error('Usuário não encontrado');
+  async calcularSomasDespesas(usuarioId: number, mes?: number, ano?: number) {
+    const whereClause: any = { usuarioId };
+    
+    if (mes !== undefined || ano !== undefined) {
+      whereClause.data = {};
+      if (mes !== undefined) whereClause.data.gte = new Date(ano || new Date().getFullYear(), mes - 1, 1);
+      if (mes !== undefined) whereClause.data.lt = new Date(ano || new Date().getFullYear(), mes, 1);
+      if (ano !== undefined && mes === undefined) {
+        whereClause.data.gte = new Date(ano, 0, 1);
+        whereClause.data.lt = new Date(ano + 1, 0, 1);
+      }
     }
 
     const despesas = await this.prisma.despesa.findMany({
-      where: { usuarioId },
+      where: whereClause,
     });
 
-    const valorTotalDespesas = despesas.reduce((soma, d) => soma + d.valor, 0);
+    const valorTotal = despesas.reduce((soma, d) => soma + d.valor, 0);
 
-    const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
+    const porCategoria: Record<string, number> = {};
 
     for (const despesa of despesas) {
       if (!porCategoria[despesa.tipo]) {
-        porCategoria[despesa.tipo] = { valor: 0, quantidade: 0 };
+        porCategoria[despesa.tipo] = 0;
       }
-      porCategoria[despesa.tipo].valor += despesa.valor;
-      porCategoria[despesa.tipo].quantidade += 1;
+      porCategoria[despesa.tipo] += despesa.valor;
     }
 
-    const porcentagemPorCategoriaValor = valorTotalDespesas > 0
-      ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, { valor }]) => [
-            tipo,
-            Number(((valor / valorTotalDespesas) * 100).toFixed(2)),
-          ])
-        )
-      : {};
-
-    const porcentagemPorCategoriaQuantidade = despesas.length > 0
-      ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, { quantidade }]) => [
-            tipo,
-            Number(((quantidade / despesas.length) * 100).toFixed(2)),
-          ])
-        )
-      : {};
-
-    const categoriaMaisCara = Object.entries(porCategoria).reduce(
-      (max, atual) => (atual[1].valor > max[1].valor ? atual : max),
-      ['', { valor: 0, quantidade: 0 }]
-    )[0];
-
     return {
-      valorTotalDespesas,
-      saldo: usuario.saldo, 
+      valorTotal,
       porCategoria,
-      porcentagemPorCategoriaValor,
-      porcentagemPorCategoriaQuantidade,
-      categoriaMaisCara: categoriaMaisCara || null,
-      totalDespesas: despesas.length,
     };
   }
 
-  async calcularEstatisticasReceitas(usuarioId: number) {
-    const usuario = await this.prisma.user.findUnique({
-      where: { id: usuarioId },
-      select: { saldo: true },
-    });
-
-    if (!usuario) {
-      throw new Error('Usuário não encontrado');
+  async calcularSomasReceitas(usuarioId: number, mes?: number, ano?: number) {
+    const whereClause: any = { usuarioId };
+    
+    if (mes !== undefined || ano !== undefined) {
+      whereClause.data = {};
+      if (mes !== undefined) whereClause.data.gte = new Date(ano || new Date().getFullYear(), mes - 1, 1);
+      if (mes !== undefined) whereClause.data.lt = new Date(ano || new Date().getFullYear(), mes, 1);
+      if (ano !== undefined && mes === undefined) {
+        whereClause.data.gte = new Date(ano, 0, 1);
+        whereClause.data.lt = new Date(ano + 1, 0, 1);
+      }
     }
 
     const receitas = await this.prisma.receita.findMany({
-      where: { usuarioId },
+      where: whereClause,
     });
 
-    const valorTotalReceitas = receitas.reduce((soma, r) => soma + r.valor, 0);
+    const valorTotal = receitas.reduce((soma, r) => soma + r.valor, 0);
 
-    const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
+    const porCategoria: Record<string, number> = {};
 
     for (const receita of receitas) {
       if (!porCategoria[receita.tipo]) {
-        porCategoria[receita.tipo] = { valor: 0, quantidade: 0 };
+        porCategoria[receita.tipo] = 0;
       }
-      porCategoria[receita.tipo].valor += receita.valor;
-      porCategoria[receita.tipo].quantidade += 1;
+      porCategoria[receita.tipo] += receita.valor;
     }
 
-    const porcentagemPorCategoriaValor = valorTotalReceitas > 0
-      ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, { valor }]) => [
-            tipo,
-            Number(((valor / valorTotalReceitas) * 100).toFixed(2)),
-          ])
-        )
-      : {};
-
-    const porcentagemPorCategoriaQuantidade = receitas.length > 0
-      ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, { quantidade }]) => [
-            tipo,
-            Number(((quantidade / receitas.length) * 100).toFixed(2)),
-          ])
-        )
-      : {};
-
-    const categoriaMaisCara = Object.entries(porCategoria).reduce(
-      (max, atual) => (atual[1].valor > max[1].valor ? atual : max),
-      ['', { valor: 0, quantidade: 0 }]
-    )[0];
-
     return {
-      valorTotalReceitas,
-      saldo: usuario.saldo, 
+      valorTotal,
       porCategoria,
-      porcentagemPorCategoriaValor,
-      porcentagemPorCategoriaQuantidade,
-      categoriaMaisRelevante: categoriaMaisCara || null,
-      totalReceitas: receitas.length,
     };
   }
 }
