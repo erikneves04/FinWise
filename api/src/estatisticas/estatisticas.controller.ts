@@ -8,22 +8,42 @@ export class EstatisticasController {
   constructor(private readonly estatisticasService: EstatisticasService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('despesas')
-  async obterSomasDespesas(
+  @Get('despesas/total')
+  async totalDespesas(
     @User() user: any,
     @Query('mes') mes?: number,
     @Query('ano') ano?: number
   ) {
-    return this.estatisticasService.calcularSomasDespesas(user.id, mes, ano);
+    return this.estatisticasService.totalDespesas(user.id, mes, ano);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('receitas')
-  async obterSomasReceitas(
+  @Get('receitas/total')
+  async totalReceitas(
     @User() user: any,
     @Query('mes') mes?: number,
     @Query('ano') ano?: number
   ) {
-    return this.estatisticasService.calcularSomasReceitas(user.id, mes, ano);
+    return this.estatisticasService.totalReceitas(user.id, mes, ano);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('despesas/categorias')
+  async totalDespesasPorCategoria(
+    @User() user: any,
+    @Query('mes') mes?: number,
+    @Query('ano') ano?: number
+  ) {
+    return this.estatisticasService.totalDespesasPorCategoria(user.id, mes, ano);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('receitas/categorias')
+  async totalReceitasPorCategoria(
+    @User() user: any,
+    @Query('mes') mes?: number,
+    @Query('ano') ano?: number
+  ) {
+    return this.estatisticasService.totalReceitasPorCategoria(user.id, mes, ano);
   }
 }
