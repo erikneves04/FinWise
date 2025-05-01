@@ -13,18 +13,18 @@ export class DespesasService {
       data.getUTCFullYear(),
       data.getUTCMonth(),
       data.getUTCDate(),
-      0, 0, 0, 0 
+      0, 0, 0, 0
     ));
- 
-    return this.prisma.despesa.create({
-      data: {
-        descricao: dto.descricao,
-        valor: dto.valor,
-        tipo: dto.tipo,
-        data: utcData,
-        usuarioId: usuarioId,
-      },
-    });
+  
+    const createData: any = {
+      descricao: dto.descricao,
+      valor: dto.valor,
+      tipo: dto.tipo,
+      data: utcData,
+      usuarioId: usuarioId,
+    };
+  
+    return this.prisma.despesa.create({ data: createData });
   }
 
   async findAll(usuarioId: number) {
@@ -42,10 +42,12 @@ export class DespesasService {
   }
 
   async update(usuarioId: number, id: number, dto: UpdateDespesaDto) {
-    const despesa = await this.findOne(usuarioId, id);
+    await this.findOne(usuarioId, id);
+    
+    const updateData: any = { ...dto };
     return this.prisma.despesa.update({
       where: { id },
-      data: dto,
+      data: updateData,
     });
   }
 
