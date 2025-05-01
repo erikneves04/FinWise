@@ -1,127 +1,93 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class EstatisticasService {
   constructor(private prisma: PrismaService) {}
 
-  async calcularEstatisticasDespesas(usuarioId: number) {
-    const usuario = await this.prisma.user.findUnique({
-      where: { id: usuarioId },
-      select: { saldo: true },
-    });
-
-    if (!usuario) {
-      throw new Error('Usuário não encontrado');
+  private buildDateFilter(mes?: number, ano?: number) {
+    const filter: any = {};
+    
+    if (mes !== undefined || ano !== undefined) {
+      filter.data = {};
+      if (mes !== undefined) {
+        filter.data.gte = new Date(ano || new Date().getFullYear(), mes - 1, 1);
+        filter.data.lt = new Date(ano || new Date().getFullYear(), mes, 1);
+      }
+      if (ano !== undefined && mes === undefined) {
+        filter.data.gte = new Date(ano, 0, 1);
+        filter.data.lt = new Date(ano + 1, 0, 1);
+      }
     }
+    
+    return filter;
+  }
+
+  async totalDespesas(usuarioId: number, mes?: number, ano?: number) {
+    const whereClause = {
+      usuarioId,
+      ...this.buildDateFilter(mes, ano)
+    };
 
     const despesas = await this.prisma.despesa.findMany({
-      where: { usuarioId },
+      where: whereClause,
     });
 
-    const valorTotalDespesas = despesas.reduce((soma, d) => soma + d.valor, 0);
-
-    const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
-
-    for (const despesa of despesas) {
-      if (!porCategoria[despesa.tipo]) {
-        porCategoria[despesa.tipo] = { valor: 0, quantidade: 0 };
-      }
-      porCategoria[despesa.tipo].valor += despesa.valor;
-      porCategoria[despesa.tipo].quantidade += 1;
-    }
-
-    const porcentagemPorCategoriaValor = valorTotalDespesas > 0
-      ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, { valor }]) => [
-            tipo,
-            Number(((valor / valorTotalDespesas) * 100).toFixed(2)),
-          ])
-        )
-      : {};
-
-    const porcentagemPorCategoriaQuantidade = despesas.length > 0
-      ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, { quantidade }]) => [
-            tipo,
-            Number(((quantidade / despesas.length) * 100).toFixed(2)),
-          ])
-        )
-      : {};
-
-    const categoriaMaisCara = Object.entries(porCategoria).reduce(
-      (max, atual) => (atual[1].valor > max[1].valor ? atual : max),
-      ['', { valor: 0, quantidade: 0 }]
-    )[0];
-
     return {
-      valorTotalDespesas,
-      saldo: usuario.saldo, 
-      porCategoria,
-      porcentagemPorCategoriaValor,
-      porcentagemPorCategoriaQuantidade,
-      categoriaMaisCara: categoriaMaisCara || null,
-      totalDespesas: despesas.length,
+      valorTotal: despesas.reduce((soma, d) => soma + d.valor, 0),
     };
   }
 
-  async calcularEstatisticasReceitas(usuarioId: number) {
-    const usuario = await this.prisma.user.findUnique({
-      where: { id: usuarioId },
-      select: { saldo: true },
-    });
-
-    if (!usuario) {
-      throw new Error('Usuário não encontrado');
-    }
+  async totalReceitas(usuarioId: number, mes?: number, ano?: number) {
+    const whereClause = {
+      usuarioId,
+      ...this.buildDateFilter(mes, ano)
+    };
 
     const receitas = await this.prisma.receita.findMany({
-      where: { usuarioId },
+      where: whereClause,
     });
 
-    const valorTotalReceitas = receitas.reduce((soma, r) => soma + r.valor, 0);
+    return {
+      valorTotal: receitas.reduce((soma, r) => soma + r.valor, 0),
+    };
+  }
 
-    const porCategoria: Record<string, { valor: number, quantidade: number }> = {};
+  async totalDespesasPorCategoria(usuarioId: number, mes?: number, ano?: number) {
+    const whereClause = {
+      usuarioId,
+      ...this.buildDateFilter(mes, ano)
+    };
 
-    for (const receita of receitas) {
-      if (!porCategoria[receita.tipo]) {
-        porCategoria[receita.tipo] = { valor: 0, quantidade: 0 };
-      }
-      porCategoria[receita.tipo].valor += receita.valor;
-      porCategoria[receita.tipo].quantidade += 1;
+    const despesas = await this.prisma.despesa.findMany({
+      where: whereClause,
+    });
+
+    const porCategoria: Record<string, number> = {};
+
+    for (const despesa of despesas) {
+      porCategoria[despesa.tipo] = (porCategoria[despesa.tipo] || 0) + despesa.valor;
     }
 
-    const porcentagemPorCategoriaValor = valorTotalReceitas > 0
-      ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, { valor }]) => [
-            tipo,
-            Number(((valor / valorTotalReceitas) * 100).toFixed(2)),
-          ])
-        )
-      : {};
+    return { porCategoria };
+  }
 
-    const porcentagemPorCategoriaQuantidade = receitas.length > 0
-      ? Object.fromEntries(
-          Object.entries(porCategoria).map(([tipo, { quantidade }]) => [
-            tipo,
-            Number(((quantidade / receitas.length) * 100).toFixed(2)),
-          ])
-        )
-      : {};
-
-    const categoriaMaisCara = Object.entries(porCategoria).reduce(
-      (max, atual) => (atual[1].valor > max[1].valor ? atual : max),
-      ['', { valor: 0, quantidade: 0 }]
-    )[0];
-
-    return {
-      valorTotalReceitas,
-      saldo: usuario.saldo, 
-      porCategoria,
-      porcentagemPorCategoriaValor,
-      porcentagemPorCategoriaQuantidade,
-      categoriaMaisRelevante: categoriaMaisCara || null,
-      totalReceitas: receitas.length,
+  async totalReceitasPorCategoria(usuarioId: number, mes?: number, ano?: number) {
+    const whereClause = {
+      usuarioId,
+      ...this.buildDateFilter(mes, ano)
     };
+
+    const receitas = await this.prisma.receita.findMany({
+      where: whereClause,
+    });
+
+    const porCategoria: Record<string, number> = {};
+
+    for (const receita of receitas) {
+      porCategoria[receita.tipo] = (porCategoria[receita.tipo] || 0) + receita.valor;
+    }
+
+    return { porCategoria };
   }
 }

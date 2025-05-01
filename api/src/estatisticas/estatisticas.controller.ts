@@ -3,23 +3,47 @@ import { EstatisticasService } from './estatisticas.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../auth/usuario.decorator';
 
-@Controller('usuarios/estatisticas')
+@Controller('estatisticas')
 export class EstatisticasController {
   constructor(private readonly estatisticasService: EstatisticasService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get()
-  async obterEstatisticas(@Query('tipo') tipo: string, @User() user: any) {
-    if (!tipo) {
-      throw new Error('Tipo não informado. Use "despesas" ou "receitas".');
-    }
+  @Get('despesas/total')
+  async totalDespesas(
+    @User() user: any,
+    @Query('mes') mes?: number,
+    @Query('ano') ano?: number
+  ) {
+    return this.estatisticasService.totalDespesas(user.id, mes, ano);
+  }
 
-    if (tipo === 'despesas') {
-      return this.estatisticasService.calcularEstatisticasDespesas(user.id);
-    } else if (tipo === 'receitas') {
-      return this.estatisticasService.calcularEstatisticasReceitas(user.id);
-    } else {
-      throw new Error('Tipo inválido. Use "despesas" ou "receitas".');
-    }
+  @UseGuards(JwtAuthGuard)
+  @Get('receitas/total')
+  async totalReceitas(
+    @User() user: any,
+    @Query('mes') mes?: number,
+    @Query('ano') ano?: number
+  ) {
+    return this.estatisticasService.totalReceitas(user.id, mes, ano);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('despesas/categorias')
+  async totalDespesasPorCategoria(
+    @User() user: any,
+    @Query('mes') mes?: number,
+    @Query('ano') ano?: number
+  ) {
+    return this.estatisticasService.totalDespesasPorCategoria(user.id, mes, ano);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('receitas/categorias')
+  async totalReceitasPorCategoria(
+    @User() user: any,
+    @Query('mes') mes?: number,
+    @Query('ano') ano?: number
+  ) {
+    return this.estatisticasService.totalReceitasPorCategoria(user.id, mes, ano);
   }
 }
