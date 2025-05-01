@@ -131,7 +131,7 @@ classDiagram
         +gerenciarMembros()
     }
 
-    Usuario "1" o-- "1*" Conta
+    Usuario "1" o-- "1" Conta
     Conta "1" o-- "0..*" Receita
     Conta "1" o-- "0..*" Despesa
     Usuario "1" o-- "0..*" Cartao
