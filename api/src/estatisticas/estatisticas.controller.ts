@@ -1,3 +1,4 @@
+// estatisticas.controller.ts
 import { Controller, Get, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { EstatisticasService } from './estatisticas.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -11,19 +12,19 @@ export class EstatisticasController {
   @Get('totais-por-dia')
   async getTotaisPorDia(
     @User() user: any,
-    @Query('mes', ParseIntPipe) mes: number,
-    @Query('ano', ParseIntPipe) ano: number
+    @Query('mes', new ParseIntPipe()) mes: number,
+    @Query('ano', new ParseIntPipe()) ano: number
   ) {
-    return this.estatisticasService.getTotaisPorDia(mes, ano, user.id);
+    return this.estatisticasService.getTotaisPorDia(user.id, mes, ano);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('despesas-por-categoria-por-dia')
-  async getDespesasPorCategoriaPorDia(
+  @Get('despesas-por-categoria')
+  async getDespesasPorCategoria(
     @User() user: any,
-    @Query('mes', ParseIntPipe) mes: number,
-    @Query('ano', ParseIntPipe) ano: number
+    @Query('mes', new ParseIntPipe()) mes: number,
+    @Query('ano', new ParseIntPipe()) ano: number
   ) {
-    return this.estatisticasService.getDespesasPorCategoriaPorDia(mes, ano, user.id);
+    return this.estatisticasService.getDespesasPorCategoria(user.id, mes, ano);
   }
 }

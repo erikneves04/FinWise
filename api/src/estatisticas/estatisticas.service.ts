@@ -1,3 +1,4 @@
+// estatisticas.service.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -5,24 +6,21 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class EstatisticasService {
   constructor(private prisma: PrismaService) {}
 
-  private getFirstAndLastDayOfMonth(month: number, year: number) {
-    const firstDay = new Date(year, month - 1, 1);
-    const lastDay = new Date(year, month, 0); // Último dia do mês
+  async getTotaisPorDia(usuarioId: number, mes: number, ano: number) {
+    // Validação básica dos parâmetros
+    if (mes < 1 || mes > 12) throw new Error('Mês inválido (1-12)');
     
-    return { firstDay, lastDay };
-  }
+    const dataInicio = new Date(ano, mes - 1, 1);
+    const dataFim = new Date(ano, mes, 0); // Último dia do mês
 
-  async getTotaisPorDia(mes: number, ano: number, usuarioId: number) {
-    const { firstDay, lastDay } = this.getFirstAndLastDayOfMonth(mes, ano);
-    
-    // Consulta despesas agrupadas por dia
+    // Obter despesas agrupadas por dia
     const despesasPorDia = await this.prisma.despesa.groupBy({
       by: ['data'],
       where: {
         usuarioId,
         data: {
-          gte: firstDay,
-          lte: lastDay,
+          gte: dataInicio,
+          lte: dataFim,
         },
       },
       _sum: {
@@ -30,14 +28,14 @@ export class EstatisticasService {
       },
     });
 
-    // Consulta receitas agrupadas por dia
+    // Obter receitas agrupadas por dia
     const receitasPorDia = await this.prisma.receita.groupBy({
       by: ['data'],
       where: {
         usuarioId,
         data: {
-          gte: firstDay,
-          lte: lastDay,
+          gte: dataInicio,
+          lte: dataFim,
         },
       },
       _sum: {
@@ -45,87 +43,70 @@ export class EstatisticasService {
       },
     });
 
-    // Criar um mapa para cada dia do mês
-    const diasNoMes = lastDay.getDate();
-    const resultados = [];
+    // Criar um mapa para facilitar a consulta
+    const resultados = new Map<string, { valorTotalReceitas: number, valorTotalDespesas: number }>();
 
-    for (let dia = 1; dia <= diasNoMes; dia++) {
-      const dataAtual = new Date(ano, mes - 1, dia);
-      const dataFormatada = dataAtual.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    // Processar despesas
+    despesasPorDia.forEach((item) => {
+      const dataStr = item.data.toISOString().split('T')[0];
+      if (!resultados.has(dataStr)) {
+        resultados.set(dataStr, { valorTotalReceitas: 0, valorTotalDespesas: 0 });
+      }
+      resultados.get(dataStr).valorTotalDespesas = item._sum.valor;
+    });
 
-      // Encontrar despesas para este dia
-      const despesaDia = despesasPorDia.find(d => 
-        d.data.getDate() === dia && 
-        d.data.getMonth() === mes - 1 && 
-        d.data.getFullYear() === ano
-      );
+    // Processar receitas
+    receitasPorDia.forEach((item) => {
+      const dataStr = item.data.toISOString().split('T')[0];
+      if (!resultados.has(dataStr)) {
+        resultados.set(dataStr, { valorTotalReceitas: 0, valorTotalDespesas: 0 });
+      }
+      resultados.get(dataStr).valorTotalReceitas = item._sum.valor;
+    });
 
-      // Encontrar receitas para este dia
-      const receitaDia = receitasPorDia.find(r => 
-        r.data.getDate() === dia && 
-        r.data.getMonth() === mes - 1 && 
-        r.data.getFullYear() === ano
-      );
+    // Converter para o formato de array solicitado
+    const resultadoFinal = Array.from(resultados.entries())
+      .map(([referencia, valores]) => ({
+        referencia,
+        ...valores
+      }))
+      .sort((a, b) => new Date(a.referencia).getTime() - new Date(b.referencia).getTime());
 
-      resultados.push({
-        referencia: dataFormatada,
-        valorTotalReceitas: receitaDia?._sum.valor || 0,
-        valorTotalDespesas: despesaDia?._sum.valor || 0,
-      });
-    }
-
-    return resultados;
+    return resultadoFinal;
   }
 
-  async getDespesasPorCategoriaPorDia(mes: number, ano: number, usuarioId: number) {
-    const { firstDay, lastDay } = this.getFirstAndLastDayOfMonth(mes, ano);
+  async getDespesasPorCategoria(usuarioId: number, mes: number, ano: number) {
+    // Validação básica dos parâmetros
+    if (mes < 1 || mes > 12) throw new Error('Mês inválido (1-12)');
     
-    // Consulta despesas agrupadas por dia e categoria
-    const despesas = await this.prisma.despesa.findMany({
+    const dataInicio = new Date(ano, mes - 1, 1);
+    const dataFim = new Date(ano, mes, 0); // Último dia do mês
+
+    // Obter despesas agrupadas por categoria
+    const despesasPorCategoria = await this.prisma.despesa.groupBy({
+      by: ['tipo'],
       where: {
         usuarioId,
         data: {
-          gte: firstDay,
-          lte: lastDay,
+          gte: dataInicio,
+          lte: dataFim,
         },
       },
-      select: {
-        data: true,
-        tipo: true,
+      _sum: {
         valor: true,
       },
-      orderBy: {
-        data: 'asc',
+      _count: {
+        _all: true,
       },
     });
 
-    // Criar estrutura de resultados
-    const diasNoMes = lastDay.getDate();
-    const resultados = [];
+    // Formatar o resultado
+    const resultado = despesasPorCategoria.map((item) => ({
+      categoria: item.tipo,
+      valorTotal: item._sum.valor,
+      quantidade: item._count._all,
+    }));
 
-    for (let dia = 1; dia <= diasNoMes; dia++) {
-      const dataAtual = new Date(ano, mes - 1, dia);
-      const dataFormatada = dataAtual.toISOString().split('T')[0];
-
-      // Filtrar despesas do dia atual
-      const despesasDoDia = despesas.filter(d => 
-        d.data.getDate() === dia && 
-        d.data.getMonth() === mes - 1 && 
-        d.data.getFullYear() === ano
-      );
-
-      // Agrupar por categoria
-      const porCategoria = {};
-      despesasDoDia.forEach(d => {
-        porCategoria[d.tipo] = (porCategoria[d.tipo] || 0) + d.valor;
-      });
-
-      resultados.push({
-        referencia: dataFormatada,
-        categorias: porCategoria,
-      });
-    }
-
-    return resultados;
+    return resultado;
   }
 }
