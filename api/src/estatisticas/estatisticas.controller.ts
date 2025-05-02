@@ -36,14 +36,4 @@ export class EstatisticasController {
   ) {
     return this.estatisticasService.totalDespesasPorCategoria(user.id, mes, ano);
   }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('receitas/categorias')
-  async totalReceitasPorCategoria(
-    @User() user: any,
-    @Query('mes') mes?: number,
-    @Query('ano') ano?: number
-  ) {
-    return this.estatisticasService.totalReceitasPorCategoria(user.id, mes, ano);
-  }
 }
