@@ -1,4 +1,5 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+// estatisticas.controller.ts
+import { Controller, Get, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { EstatisticasService } from './estatisticas.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../auth/usuario.decorator';
@@ -8,32 +9,22 @@ export class EstatisticasController {
   constructor(private readonly estatisticasService: EstatisticasService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('despesas/total')
-  async totalDespesas(
+  @Get('totais-por-dia')
+  async getTotaisPorDia(
     @User() user: any,
-    @Query('mes') mes?: number,
-    @Query('ano') ano?: number
+    @Query('mes', new ParseIntPipe()) mes: number,
+    @Query('ano', new ParseIntPipe()) ano: number
   ) {
-    return this.estatisticasService.totalDespesas(user.id, mes, ano);
+    return this.estatisticasService.getTotaisPorDia(user.id, mes, ano);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('receitas/total')
-  async totalReceitas(
+  @Get('despesas-por-categoria')
+  async getDespesasPorCategoria(
     @User() user: any,
-    @Query('mes') mes?: number,
-    @Query('ano') ano?: number
+    @Query('mes', new ParseIntPipe()) mes: number,
+    @Query('ano', new ParseIntPipe()) ano: number
   ) {
-    return this.estatisticasService.totalReceitas(user.id, mes, ano);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('despesas/categorias')
-  async totalDespesasPorCategoria(
-    @User() user: any,
-    @Query('mes') mes?: number,
-    @Query('ano') ano?: number
-  ) {
-    return this.estatisticasService.totalDespesasPorCategoria(user.id, mes, ano);
+    return this.estatisticasService.getDespesasPorCategoria(user.id, mes, ano);
   }
 }
