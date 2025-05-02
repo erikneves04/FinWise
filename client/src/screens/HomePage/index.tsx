@@ -9,6 +9,8 @@ import { Background } from '../../components/Background';
 import Header from '../../components/Header';
 import { NavBar } from '../../components/NavBar';
 
+import { CategoryResponse, GetCategories } from '../../services/requests/Statistics/StatisticsServices';
+
 type ScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, "HomePage">;
 
 type Props = {
@@ -33,12 +35,27 @@ const pieData = [
 export default function HomePage({ navigation }: Props) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [graphData, setGraphData] = useState(apiData);
-  const [pieGraphData, setPieGraphData] = useState(pieData);
+  const [pieGraphData, setPieGraphData] = useState<CategoryResponse[]>([]);
   const [showLegend, setShowLegend] = useState(true);
 
   const screenWidth = Dimensions.get('window').width - 55; 
   const graphHeight = 150;
   const pieGraphHeight = 150;
+
+  useEffect(() => {
+    async function fetchPieData() {
+      try {
+        const month = currentMonth.getMonth() + 1; // JS months are 0-based
+        const year = currentMonth.getFullYear();
+        const data = await GetCategories(month, year);
+        setPieGraphData(data);
+      } catch (error) {
+        console.error("Erro ao buscar categorias:", error);
+      }
+    }
+  
+    fetchPieData();
+  }, [currentMonth]);
 
   const changeMonth = (amount: number) => {
     const newDate = new Date(currentMonth);
