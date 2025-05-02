@@ -9,7 +9,7 @@ import { Background } from '../../components/Background';
 import Header from '../../components/Header';
 import { NavBar } from '../../components/NavBar';
 
-import { CategoryResponse, GetCategories } from '../../services/requests/Statistics/StatisticsServices';
+import { CategoryResponse, GetCategories, GetLines, TotalResponse } from '../../services/requests/Statistics/StatisticsServices';
 
 type ScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, "HomePage">;
 
@@ -17,24 +17,9 @@ type Props = {
   navigation: ScreenNavigationProp;
 };
 
-const apiData = [
-  { referencia: '2025-04-01', valorTotalReceitas: 1000, valorTotalDespesas: 500 },
-  { referencia: '2025-04-02', valorTotalReceitas: 1500, valorTotalDespesas: 700 },
-  { referencia: '2025-04-03', valorTotalReceitas: 1200, valorTotalDespesas: 800 },
-  { referencia: '2025-04-04', valorTotalReceitas: 2000, valorTotalDespesas: 600 },
-  { referencia: '2025-04-05', valorTotalReceitas: 1700, valorTotalDespesas: 900 },
-];
-
-const pieData = [
-  { categoria: 'AAA', valorTotal: 500 },
-  { categoria: 'BBB', valorTotal: 300 },
-  { categoria: 'CCC', valorTotal: 200 },
-  { categoria: 'DDD', valorTotal: 200 },
-];
-
 export default function HomePage({ navigation }: Props) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [graphData, setGraphData] = useState(apiData);
+  const [graphData, setGraphData] = useState<TotalResponse[]>([]);
   const [pieGraphData, setPieGraphData] = useState<CategoryResponse[]>([]);
   const [showLegend, setShowLegend] = useState(true);
 
@@ -45,7 +30,7 @@ export default function HomePage({ navigation }: Props) {
   useEffect(() => {
     async function fetchPieData() {
       try {
-        const month = currentMonth.getMonth() + 1; // JS months are 0-based
+        const month = currentMonth.getMonth() + 1;
         const year = currentMonth.getFullYear();
         const data = await GetCategories(month, year);
         setPieGraphData(data);
@@ -55,6 +40,21 @@ export default function HomePage({ navigation }: Props) {
     }
   
     fetchPieData();
+  }, [currentMonth]);
+
+  useEffect(() => {
+    async function fetchLineData() {
+      try {
+        const month = currentMonth.getMonth() + 1;
+        const year = currentMonth.getFullYear();
+        const data = await GetLines(month, year);
+        setGraphData(data);
+      } catch (error) {
+        console.error("Erro ao buscar receitas/despesas:", error);
+      }
+    }
+  
+    fetchLineData();
   }, [currentMonth]);
 
   const changeMonth = (amount: number) => {
