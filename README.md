@@ -69,6 +69,8 @@
   
 6. Eu como usuário, gostaria de visualizar gráficos e estatísticas relacionadas ao meu balanço mensal de transações.
    - Implementar a rota de retornar estatísticas [Gabriella]
+   - Implementar a exibição dos dados em gráficos na página inicial [Erik Neves]
+  
 ### Diagrama de Classes
 
 O **Diagrama de Classes** abaixo apresenta a estrutura das principais entidades do FinWise, incluindo como elas se relacionam entre si.
