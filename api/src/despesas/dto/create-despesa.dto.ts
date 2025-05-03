@@ -1,5 +1,4 @@
-import { DespesaTipo } from '@prisma/client';
-import { IsNotEmpty, IsNumber, IsEnum, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsDateString } from 'class-validator';
 
 export class CreateDespesaDto {
   @IsNotEmpty()
@@ -8,8 +7,8 @@ export class CreateDespesaDto {
   @IsNumber()
   valor: number;
 
-  @IsEnum(DespesaTipo)
-  tipo: DespesaTipo;
+  @IsString()
+  tipo: string;
 
   @IsDateString()
   data: Date;
