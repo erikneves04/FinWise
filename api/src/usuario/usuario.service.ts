@@ -40,8 +40,10 @@ export class UsuarioService {
     });
   }
 
-  async findAll(): Promise<PrismaUser[]> {
-    return this.prisma.user.findMany();
+  async findAll(usuarioId: number): Promise<Despesa[]> {
+    return this.prisma.despesa.findMany({
+      where: { usuarioId },
+    });
   }
 
   async findOne(id: number) {
@@ -142,8 +144,6 @@ export class UsuarioService {
     });
   
     if (!despesaAntiga) {
-      console.log("UsuarioID: " + user.id);
-      console.log("DespesaID: " + despesaId);
       throw new NotFoundException('Despesa não encontrada para este usuário.');
     }
 
