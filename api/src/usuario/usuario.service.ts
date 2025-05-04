@@ -40,8 +40,10 @@ export class UsuarioService {
     });
   }
 
-  async findAll(): Promise<PrismaUser[]> {
-    return this.prisma.user.findMany();
+  async findAll(usuarioId: number): Promise<Despesa[]> {
+    return this.prisma.despesa.findMany({
+      where: { usuarioId },
+    });
   }
 
   async findOne(id: number) {
