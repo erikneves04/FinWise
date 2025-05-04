@@ -7,7 +7,6 @@ import { UpdateDespesaDto } from 'src/despesas/dto/update-despesa.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '../auth/usuario.decorator';
 import { User as PrismaUser, Despesa } from '@prisma/client';
-import { DespesaTipo } from '@prisma/client'; 
 
 @Injectable()
 export class UsuarioService {
@@ -88,9 +87,6 @@ export class UsuarioService {
   async createExpense(id: number, dto: CreateDespesaDto): Promise<Despesa> {
     const usuario = await this.findOne(id);
 
-    if (!Object.values(DespesaTipo).includes(dto.tipo)) {
-      throw new BadRequestException('Tipo de despesa inválido.');
-    }
     
     const data = new Date(dto.data);
     const utcData = new Date(Date.UTC(
