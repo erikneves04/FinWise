@@ -31,7 +31,7 @@ function ConvertObjectToBody(data:any): ExpenseData {
         id: undefined,
         descricao: data.name,
         valor: ConvertValue(data.value),
-        tipo: 'alimentacao', //data.type,
+        tipo: data.type,
         data: data.date + 'T00:00:00.000Z'
     }
 }
