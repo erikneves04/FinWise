@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   ParseFloatPipe,
+  ParseIntPipe,
   Param
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
@@ -75,9 +76,10 @@ export class UsuarioController {
 
   @UseGuards(JwtAuthGuard)
   @Get('despesas')
-  getDespesas(@User() user: any): Promise<Despesa[]> {
-    return this.usuarioService.getExpenses(user.id);
+  findAll(@User() user: any) {
+    return this.usuarioService.findAll(user.id);
   }
+
 
   @UseGuards(JwtAuthGuard)
   @Get('despesas/:despesaId')
