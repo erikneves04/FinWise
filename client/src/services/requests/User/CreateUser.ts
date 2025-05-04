@@ -3,7 +3,6 @@ import { api } from "../../api";
 export interface CreateUserData {
   nome: string,
   email: string,
-  celular: string,
   senha: string,
   dataNascimento: string,
 }

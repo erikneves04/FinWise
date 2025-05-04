@@ -2,7 +2,6 @@ import { api } from "../../api";
 export interface GetUserData {
   nome: string;
   email: string;
-  celular: string;
   senha: string;
   dataNascimento: string;
   saldo: number;

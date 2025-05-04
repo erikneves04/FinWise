@@ -39,7 +39,6 @@ export default function Register({ navigation }: Props) {
     nome: "",
     email: "",
     senha: "",
-    celular: "35988589575",
     dataNascimento: "",
   });
 
