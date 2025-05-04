@@ -144,8 +144,6 @@ export class UsuarioService {
     });
   
     if (!despesaAntiga) {
-      console.log("UsuarioID: " + user.id);
-      console.log("DespesaID: " + despesaId);
       throw new NotFoundException('Despesa não encontrada para este usuário.');
     }
 
