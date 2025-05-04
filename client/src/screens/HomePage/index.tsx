@@ -18,6 +18,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { Loading } from '../../components/Loading';
+import { MessageBalloon } from '../../components/MessageBallon';
 
 type ScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, "HomePage">;
 
@@ -27,25 +29,6 @@ type Props = {
 
 const graphHeight = 175;
 
-function generateMockLineData(month: number, year: number): TotalResponse[] {
-  const daysInMonth = new Date(year, month, 0).getDate();
-
-  const data: TotalResponse[] = [];
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const receita = parseFloat((Math.random() * 500).toFixed(2));
-    const despesa = parseFloat((Math.random() * 500).toFixed(2));
-    data.push({
-      referencia: dateStr,
-      valorTotalReceitas: receita,
-      valorTotalDespesas: despesa,
-    });
-  }
-
-  return data;
-}
-
 function groupAndAverageData(data: TotalResponse[]): TotalResponse[] {
   if (data.length <= 20) return data;
 
@@ -53,12 +36,13 @@ function groupAndAverageData(data: TotalResponse[]): TotalResponse[] {
 
   for (let i = 0; i < data.length; i += 7) {
     const group = data.slice(i, i + 7);
+    if (group.length === 0) continue;
 
     const avgReceita = group.reduce((sum, item) => sum + item.valorTotalReceitas, 0) / group.length;
     const avgDespesa = group.reduce((sum, item) => sum + item.valorTotalDespesas, 0) / group.length;
 
     grouped.push({
-      referencia: group[0].referencia, // ou gere uma média da data, se preferir
+      referencia: group[0].referencia,
       valorTotalReceitas: parseFloat(avgReceita.toFixed(2)),
       valorTotalDespesas: parseFloat(avgDespesa.toFixed(2)),
     });
@@ -67,53 +51,45 @@ function groupAndAverageData(data: TotalResponse[]): TotalResponse[] {
   return grouped;
 }
 
-// ---------- Componente principal ----------
 export default function HomePage({ navigation }: Props) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [graphData, setGraphData] = useState<TotalResponse[]>([]);
   const [pieGraphData, setPieGraphData] = useState<CategoryResponse[]>([]);
   const [showLegend, setShowLegend] = useState(true);
+  
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [notSavedDataMsg, setNotSavedDataMsg] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   const screenWidth = Dimensions.get('window').width - 55;
   const pieGraphHeight = 110;
-
-  useEffect(() => {
-    const month = currentMonth.getMonth() + 1;
-    const year = currentMonth.getFullYear();
-    const mockedData = generateMockLineData(month, year);
-    setGraphData(groupAndAverageData(mockedData));
-  }, [currentMonth]);
-
-  useEffect(() => {
-    async function fetchPieData() {
-      try {
-        const month = currentMonth.getMonth() + 1;
-        const year = currentMonth.getFullYear();
-        const data = await GetCategories(month, year);
-        setPieGraphData(data);
-      } catch (error) {
-        console.error("Erro ao buscar categorias:", error);
-      }
-    }
-
-    fetchPieData();
-  }, [currentMonth]);
 
   useFocusEffect(
     React.useCallback(() => {
       async function fetchData() {
         try {
+          setLoading(true);
+  
           const month = currentMonth.getMonth() + 1;
           const year = currentMonth.getFullYear();
-          const [categories] = await Promise.all([
+  
+          const [lineData, categories] = await Promise.all([
+            GetLines(month, year),
             GetCategories(month, year),
           ]);
+  
+          const groupedData = groupAndAverageData(lineData);
+          setGraphData(groupedData);
           setPieGraphData(categories);
+  
+          setLoading(false);
         } catch (error) {
-          console.error("Erro ao atualizar dados:", error);
+          console.error("Erro ao buscar dados:", error);
+          setLoading(false);
         }
       }
-
+  
       fetchData();
     }, [currentMonth])
   );
@@ -172,6 +148,7 @@ export default function HomePage({ navigation }: Props) {
 
   return (
     <Background>
+       {loading && <Loading />}
       <View style={{ flex: 1 }}>
         <Header />
 
@@ -214,7 +191,6 @@ export default function HomePage({ navigation }: Props) {
                     let adjustedReceitaTextY = receitaTextY + hp(0.5);
 
                     if (Math.abs(receitaTextY - despesaTextY) < minTextDistance) {
-                      console.log("Colisão detectada entre os textos.");
                       if (isReceitaMaior) {
                         adjustedDespesaTextY = despesaTextY + minTextDistance + hp(0.5);
                       } else {
@@ -333,6 +309,15 @@ export default function HomePage({ navigation }: Props) {
 
         <NavBar />
       </View>
+      {error && (
+              <MessageBalloon
+                title="Atenção"
+                text={errorMsg}
+                handleConfirmButton={() => {
+                  setError(false);
+                }}
+              />
+            )}
     </Background>
   );
 }

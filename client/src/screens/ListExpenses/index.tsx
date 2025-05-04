@@ -18,6 +18,7 @@ import {
   TitleWrapper,
   Title,
   BackgroundWrapper,
+  ButtonWrapper,
 } from "./styles";
 import BagOfMoney from "../../assets/svg/bagOfMoney";
 import { TableRow } from "../../components/TableRow";
@@ -37,6 +38,7 @@ import { GetExpenses, DeleteExpense } from '../../services/requests/Expense/Expe
 import { Loading } from '../../components/Loading';
 import { handleApiError } from '../../utils/functions';
 import { MessageBalloon } from '../../components/MessageBallon';
+import { NavigationButton } from "../../components/NavigationButton";
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -75,7 +77,7 @@ export default function ExpenseList({ navigation }: Props) {
       loadExpenses();
     }, [])
   );
-  
+
 
   const handleDelete = async (id: number) => {
     setLoading(true);
@@ -98,6 +100,10 @@ export default function ExpenseList({ navigation }: Props) {
 
   const handleEdit = (expense: any) => {
     navigation.navigate("RegisterExpense", { expense });
+  };
+
+  const onHomePagePress = async () => {
+    navigation.navigate("HomePage");
   };
 
   return (
@@ -154,9 +160,18 @@ export default function ExpenseList({ navigation }: Props) {
               </View>
             </View>
           )}
-          contentContainerStyle={{ paddingBottom: 100 }} 
+          contentContainerStyle={{ paddingBottom: 100 }}
         />
       )}
+
+      <ButtonWrapper>
+        <NavigationButton
+          height={40}
+          width={50}
+          buttonText="Visualizar gráficos"
+          action={onHomePagePress}
+        />
+      </ButtonWrapper>
 
       {showModal && selectedExpense && (
         <View style={styles.modalOverlay}>
@@ -302,7 +317,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     gap: 10,
   },
-  
+
   editBtn: {
     backgroundColor: "#3FC44E",
     padding: 8,
@@ -310,7 +325,7 @@ const styles = StyleSheet.create({
     width: 40,
     alignItems: "center",
   },
-  
+
   deleteBtn: {
     backgroundColor: "#FF3B30",
     padding: 8,

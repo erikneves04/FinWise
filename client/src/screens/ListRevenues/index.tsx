@@ -20,6 +20,7 @@ import {
   Title,
   Table,
   BackgroundWrapper,
+  ButtonWrapper,
 } from "./styles";
 import BagOfMoney from "../../assets/svg/bagOfMoney";
 import { TableRow } from "../../components/TableRow";
@@ -37,6 +38,7 @@ import { Loading } from '../../components/Loading';
 import { handleApiError } from '../../utils/functions';
 import { MessageBalloon } from '../../components/MessageBallon';
 import { useFocusEffect } from "@react-navigation/native";
+import { NavigationButton } from "../../components/NavigationButton";
 
 type ScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -93,6 +95,10 @@ export default function IncomeList({ navigation }: Props) {
     navigation.navigate("RegisterIncome", { income });
   };
 
+  const onHomePagePress = async () => {
+    navigation.navigate("HomePage");
+  };
+
   return (
     <Background>
       {loading && <Loading />}
@@ -137,7 +143,7 @@ export default function IncomeList({ navigation }: Props) {
                 <Text>📅 <Text style={styles.bold}>Data:</Text> {item.date}</Text>
                 <Text>🔖 <Text style={styles.bold}>Tipo:</Text> {item.type}</Text>
               </View>
-          
+
               <View style={styles.actions}>
                 <Pressable onPress={() => handleEdit(item)} style={styles.editBtn}>
                   <Ionicons name="create-outline" size={20} color="white" />
@@ -147,8 +153,8 @@ export default function IncomeList({ navigation }: Props) {
                 </Pressable>
               </View>
             </View>
-          )}       
-          contentContainerStyle={{ paddingBottom: 100 }}    
+          )}
+          contentContainerStyle={{ paddingBottom: 100 }}
         />
       )}
 
@@ -165,6 +171,15 @@ export default function IncomeList({ navigation }: Props) {
       >
         <Ionicons name="add" size={32} color="white" />
       </Pressable>
+
+      <ButtonWrapper>
+        <NavigationButton
+          height={40}
+          width={50}
+          buttonText="Visualizar gráficos"
+          action={onHomePagePress}
+        />
+      </ButtonWrapper>
 
       <Modal
         visible={showModal}
@@ -331,13 +346,13 @@ const styles = StyleSheet.create({
     width: screenWidth - 10,
     justifyContent: "space-between",
   },
-  
+
   actions: {
     justifyContent: "center",
     alignItems: "flex-end",
     gap: 10,
   },
-  
+
   editBtn: {
     backgroundColor: "#3FC44E",
     padding: 8,
@@ -345,12 +360,12 @@ const styles = StyleSheet.create({
     width: 40,
     alignItems: "center",
   },
-  
+
   deleteBtn: {
     backgroundColor: "#FF3B30",
     padding: 8,
     borderRadius: 5,
     width: 40,
     alignItems: "center",
-  }  
+  }
 });
